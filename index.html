@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initializing - Nayra AI Vision</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .scanner { animation: scan 2s linear infinite; }
+    </style>
+</head>
+<body class="bg-slate-950 flex items-center justify-center min-h-screen overflow-hidden">
+    
+    <div class="relative text-center">
+        <div class="relative w-24 h-24 mx-auto mb-6 border-4 border-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+            <div class="scanner absolute w-full h-1 bg-blue-400 shadow-[0_0_15px_#3b82f6] z-10"></div>
+            <i class="fas fa-eye text-4xl text-blue-500"></i>
+        </div>
+
+        <h2 class="text-blue-500 font-black tracking-[0.3em] uppercase text-sm mb-2">System Initializing</h2>
+        <h1 class="text-white text-2xl font-black italic">NAYRA AI VISION</h1>
+        
+        <div class="mt-8 w-48 h-1 bg-slate-800 mx-auto rounded-full overflow-hidden">
+            <div id="progress" class="h-full bg-blue-600 transition-all duration-[3000ms] ease-out w-0"></div>
+        </div>
+        <p class="text-slate-500 text-[10px] mt-4 uppercase tracking-widest font-bold">Connecting to Neural Engine...</p>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Progress bar animation
+        setTimeout(() => {
+            document.getElementById('progress').style.width = '100%';
+        }, 100);
+
+        // Redirect to Home Screen after 3.5 seconds
+        setTimeout(() => {
+            window.location.href = "home.html";
+        }, 3500);
+    </script>
+</body>
+</html>
