@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Nayra AI Vision</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 min-h-screen">
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 text-white p-2 rounded-lg text-xs"><i class="fas fa-eye"></i></div>
+                <h1 class="text-lg font-black italic tracking-tighter">NAYRA AI VISION</h1>
+            </div>
+            <div class="text-[10px] font-black uppercase tracking-widest bg-slate-900 text-white px-3 py-1 rounded-lg">Pro Version</div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto py-12 px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-black tracking-tighter mb-4 uppercase">Next-Gen <span class="text-blue-600">Prompt Engine</span></h2>
+            <p class="text-slate-500 text-sm">Transform your raw ideas into high-fidelity AI artwork descriptions using Nayra's Logic.</p>
+        </div>
+
+        <div class="bg-white p-6 md:p-10 rounded-[40px] shadow-2xl shadow-blue-100 border border-slate-100">
+            <div class="mb-6">
+                <label class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2 mb-2 block">Enter Your Idea</label>
+                <textarea id="userInput" placeholder="e.g. A futuristic city with flying cars..." class="w-full bg-slate-50 border-none rounded-[25px] p-6 text-sm focus:ring-2 focus:ring-blue-600 h-32 transition-all"></textarea>
+            </div>
+
+            <button onclick="generatePrompt()" class="w-full bg-blue-600 text-white font-black uppercase tracking-widest py-5 rounded-[25px] hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-wand-magic-sparkles"></i> Optimize Prompt
+            </button>
+
+            <div id="resultBox" class="hidden mt-10 p-6 bg-slate-900 rounded-[30px] border border-slate-800">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-blue-400 text-[10px] font-black uppercase tracking-widest">Enhanced Result</span>
+                    <button onclick="copyText()" class="text-slate-400 hover:text-white text-xs"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <p id="outputText" class="text-slate-300 text-sm italic leading-relaxed"></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-10">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Powered by AI Nayra Hub Engine</p>
+    </footer>
+
+    <script>
+        function generatePrompt() {
+            const input = document.getElementById('userInput').value;
+            const resultBox = document.getElementById('resultBox');
+            const outputText = document.getElementById('outputText');
+
+            if(input.trim() === "") {
+                alert("Please enter an idea first!");
+                return;
+            }
+
+            // High-fidelity prompt engineering logic
+            const prefix = "Masterpiece, ultra-realistic, 8k resolution, cinematic lighting, highly detailed, professional photography, style of ";
+            const suffix = ", intricate textures, sharp focus, ray tracing, trending on artstation.";
+            
+            outputText.innerText = prefix + input + suffix;
+            resultBox.classList.remove('hidden');
+        }
+
+        function copyText() {
+            const text = document.getElementById('outputText').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Prompt copied to clipboard!");
+        }
+    </script>
+</body>
+              </html>
+              
