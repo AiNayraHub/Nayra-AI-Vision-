@@ -16,7 +16,7 @@
         .history-card:hover { transform: translateX(5px); background: #1e293b; }
     </style>
 </head>
-<body class="bg-[#0a0c10] font-sans text-slate-200 min-h-screen">
+<body class="bg-[#0a0c10] font-sans text-slate-200 min-h-screen flex flex-col">
 
     <nav class="bg-black/90 backdrop-blur-xl sticky top-0 z-50 border-b border-slate-800 px-6 py-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
@@ -32,7 +32,7 @@
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto py-12 px-6">
+    <main class="max-w-4xl mx-auto py-12 px-6 flex-grow">
         <div class="text-center mb-10">
             <h2 class="text-5xl font-black tracking-tighter mb-4 uppercase text-white">Master <span class="text-blue-500">The Vision</span></h2>
             <p class="text-slate-500 text-sm font-medium tracking-wide">Professional AI Response & Prompt Engineering Hub</p>
@@ -75,6 +75,19 @@
         </div>
     </main>
 
+    <footer class="mt-20 border-t border-slate-900 bg-black/50 py-10 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">© 2026 AI Nayra Hub</p>
+                <p class="text-[10px] text-slate-600 uppercase tracking-[0.3em]">Engineering the future</p>
+            </div>
+            <div class="flex gap-8 items-center">
+                <a href="privacy.html" class="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Privacy Policy</a>
+                <a href="terms.html" class="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
     <script>
         let history = [];
 
@@ -91,12 +104,10 @@
                 const answer = "System Analysis: Conceptualizing '" + input + "'. Applying high-fidelity artistic parameters and visual depth. Ready for execution.";
                 const prompt = "(Masterpiece), (Highly Detailed), " + input + ", cinematic lighting, 8k resolution, photorealistic, intricate textures, sharp focus, ray tracing, unreal engine 5 style.";
 
-                // Update UI
                 document.getElementById('aiAnswer').innerText = answer;
                 document.getElementById('proPrompt').innerText = prompt;
                 document.getElementById('resultArea').classList.remove('hidden');
                 
-                // Add to History
                 addToHistory(input);
 
                 btn.innerHTML = '<i class="fas fa-brain"></i> Generate Vision';
@@ -125,4 +136,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+    
