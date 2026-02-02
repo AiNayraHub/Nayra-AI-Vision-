@@ -1,7 +1,7 @@
 {
   "name": "Nayra AI Vision",
   "short_name": "NayraAI",
-  "start_url": "home.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0a0c10",
   "theme_color": "#2563eb",
