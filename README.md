@@ -49,4 +49,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 **AI Nayra Hub** - [Project Link](https://ainayrahub.github.io/Nayra-AI-Vision-/)
 
 *"Engineering the future of vision, one prompt at a time."*
-## 🤝Connect WhatsApp+919559123316
+## 🤝Contact WhatsApp+919559123316
