@@ -50,7 +50,20 @@
                 <label class="text-[10px] font-black uppercase text-blue-500 tracking-[0.2em] ml-2 mb-3 block">Neural Input</label>
                 <textarea id="userInput" placeholder="What's on your mind?" class="w-full bg-[#0a0c10] border border-slate-800 text-white rounded-[25px] p-6 text-sm focus:ring-2 focus:ring-blue-600 h-32 transition-all outline-none"></textarea>
             </div>
+<div id="installBanner" style="display:none; background: #1e293b; border: 1px solid #3b82f6; padding: 15px; border-radius: 20px; margin: 20px auto; max-width: 90%; text-align: center; animation: slideIn 0.5s ease;">
+    <p style="color: white; font-size: 14px; margin-bottom: 10px; font-weight: bold;">Install Nayra AI Vision for a better experience!</p>
+    <button id="installAppBtn" style="background: #2563eb; color: white; padding: 8px 20px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 12px;">
+        Install App
+    </button>
+</div>
 
+<style>
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+            
             <button onclick="processAI()" id="genBtn" class="w-full bg-blue-600 text-white font-black uppercase tracking-widest py-5 rounded-[25px] hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20">
                 <i class="fas fa-brain"></i> Generate Vision
             </button>
@@ -142,6 +155,39 @@
             alert("Copied!");
         }
     </script>
-</body>
+    let deferredPrompt;
+const installBanner = document.getElementById('installBanner');
+const installAppBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Browser ka default prompt roko
+    e.preventDefault();
+    // Event ko save karo
+    deferredPrompt = e;
+    // Humara custom banner dikhao
+    installBanner.style.display = 'block';
+});
+
+installAppBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        // Install prompt dikhao
+        deferredPrompt.prompt();
+        // User ka decision check karo
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to install: ${outcome}`);
+        // Banner chhupao
+        installBanner.style.display = 'none';
+        deferredPrompt = null;
+    }
+});
+
+// Agar app pehle se installed hai toh banner mat dikhao
+window.addEventListener('appinstalled', () => {
+    installBanner.style.display = 'none';
+    deferredPrompt = null;
+    console.log('PWA was installed');
+});
+    
+</body> 
     </html>
     
