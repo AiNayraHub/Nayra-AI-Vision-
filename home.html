@@ -2,167 +2,138 @@
 <html lang="en">
 <head> 
     <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Nayra Engine: Active'))
-        .catch(err => console.log('Neural Link Failed', err));
-    });
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Gamevoo Engine: Active'))
+            .catch(err => console.log('Neural Link Failed', err));
+        });
+      }
+    </script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Nayra AI Vision - Professional Prompt Engineering Hub</title>
-    <meta name="description" content="Master the art of AI visions with Nayra AI. Generate high-fidelity prompts and neural responses instantly.">
-    <meta name="keywords" content="AI, Prompt Engineering, Nayra AI, Image Generation Prompts, AI Hub">
-    <meta name="theme-color" content="#0a0c10">
+    <title>Gamevoo - Nayra AI Vision</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0c10; color: #e2e8f0; }
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
             50% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.8); }
         }
-        
         .ai-eye { animation: pulse-glow 2s infinite; }
-        
         .glass-card {
             background: rgba(17, 24, 39, 0.7);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .history-card { 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.3s ease;
             border: 1px solid transparent;
         }
-        
         .history-card:hover { 
-            transform: translateY(-2px); 
             background: #1e293b; 
             border-color: #3b82f6;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0c10; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
     </style>
 </head>
-<body class="bg-[#0a0c10] text-slate-200 min-h-screen flex flex-col selection:bg-blue-500/30">
+<body class="min-h-screen flex flex-col">
 
     <nav class="bg-black/80 backdrop-blur-xl sticky top-0 z-50 border-b border-white/5 px-6 py-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3 group cursor-pointer">
-                <div class="ai-eye bg-blue-600 text-white w-11 h-11 rounded-2xl flex items-center justify-center border border-blue-400/50 transition-transform group-hover:rotate-12">
-                    <i class="fas fa-eye text-xl"></i>
+            <div class="flex items-center gap-3 group">
+                <div class="ai-eye bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center border border-blue-400/50">
+                    <i class="fas fa-eye"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black italic tracking-tighter text-white leading-none">NAYRA AI</h1>
-                    <span class="text-[8px] text-blue-500 font-bold tracking-[0.3em] uppercase">Vision Hub</span>
+                    <h1 class="text-lg font-black italic tracking-tighter text-white leading-none uppercase">Gamevoo</h1>
+                    <span class="text-[8px] text-blue-500 font-bold tracking-[0.3em] uppercase">Nayra AI Vision</span>
                 </div>
             </div>
-            <button class="group relative px-6 py-2.5 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full overflow-hidden transition-all hover:pr-9">
-                <span class="relative z-10">Get Pro</span>
-                <i class="fas fa-arrow-right absolute right-3 top-1/2 -translate-y-1/2 opacity-0 transition-all group-hover:opacity-100"></i>
-            </button>
+            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Neural Link: Active</div>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto py-16 px-6 flex-grow">
-        <div class="text-center mb-12">
-            <span class="inline-block px-4 py-1.5 mb-4 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-bold uppercase tracking-[0.2em]">Next Gen AI Engineering</span>
-            <h2 class="text-6xl font-black tracking-tighter mb-4 uppercase text-white leading-none">
-                Master <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-400">The Vision</span>
-            </h2>
-            <p class="text-slate-500 text-sm font-medium max-w-md mx-auto">Elevate your creative workflow with precision-engineered AI neural responses.</p>
+    <main class="max-w-4xl mx-auto py-12 px-6 flex-grow w-full">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl font-black tracking-tighter mb-2 uppercase text-white">Ask <span class="text-blue-500">Nayra</span></h2>
+            <p class="text-slate-500 text-xs font-medium">Get intelligent answers and AI-ready image prompts instantly.</p>
         </div>
 
-        <div class="glass-card p-1 rounded-[40px] shadow-2xl">
-            <div class="bg-[#0a0c10]/50 p-8 rounded-[38px]">
-                <div class="mb-6 relative">
-                    <div class="flex justify-between items-center mb-3 px-2">
-                        <label class="text-[10px] font-black uppercase text-blue-500 tracking-[0.2em]">Neural Input</label>
-                        <span id="charCount" class="text-[10px] text-slate-600 font-bold uppercase">0/500</span>
+        <div class="glass-card p-6 rounded-[35px] shadow-2xl">
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2 px-2">
+                    <label class="text-[9px] font-black uppercase text-blue-500 tracking-widest">Query Input</label>
+                    <span id="charCount" class="text-[9px] text-slate-600 font-bold uppercase">0/500</span>
+                </div>
+                <textarea id="userInput" maxlength="500" placeholder="Ask anything or describe a scene..." 
+                    class="w-full bg-black/40 border border-white/5 text-white rounded-2xl p-5 text-sm focus:border-blue-600/50 focus:ring-4 focus:ring-blue-600/5 h-32 transition-all outline-none resize-none"></textarea>
+            </div>
+
+            <button onclick="processAI()" id="genBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest py-4 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-600/20">
+                <i class="fas fa-bolt text-xs"></i> Process Query
+            </button>
+
+            <div id="resultArea" class="hidden mt-8 space-y-4">
+                <div class="bg-blue-600/5 p-5 rounded-2xl border border-blue-500/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-brain text-blue-500 text-[10px]"></i>
+                        <span class="text-blue-400 text-[9px] font-black uppercase tracking-widest">Nayra Intelligence</span>
                     </div>
-                    <textarea id="userInput" maxlength="500" placeholder="Describe the vision you want to engineer..." 
-                        class="w-full bg-black/40 border border-white/5 text-white rounded-[25px] p-6 text-sm focus:border-blue-600/50 focus:ring-4 focus:ring-blue-600/10 h-40 transition-all outline-none placeholder:text-slate-700"></textarea>
+                    <p id="aiAnswer" class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
                 </div>
 
-                <button onclick="processAI()" id="genBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest py-5 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
-                    <i class="fas fa-bolt"></i> Generate Vision
-                </button>
-
-                <div id="resultArea" class="hidden mt-10 space-y-6 animate-[fadeIn_0.5s_ease-out]">
-                    <div class="bg-blue-600/5 p-6 rounded-[30px] border border-blue-500/20">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-robot text-blue-500 text-xs"></i>
-                            <span class="text-blue-400 text-[9px] font-black uppercase tracking-widest">Nayra Analysis</span>
-                        </div>
-                        <p id="aiAnswer" class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
+                <div class="bg-black/40 p-5 rounded-2xl border border-white/5 group">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest">Neural Vision Prompt</span>
+                        <button onclick="copyPrompt()" class="text-slate-500 hover:text-white transition-colors">
+                            <i class="fas fa-copy text-xs"></i>
+                        </button>
                     </div>
-
-                    <div class="bg-black/60 p-6 rounded-[30px] border border-white/5 relative group">
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest">Enhanced Pro Prompt</span>
-                            <button onclick="copyPrompt()" class="bg-white/5 hover:bg-white/10 p-2 rounded-lg text-slate-400 transition-colors">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <p id="proPrompt" class="text-blue-100/80 text-sm italic font-light pr-4"></p>
-                    </div>
+                    <p id="proPrompt" class="text-blue-200/60 text-xs italic font-light"></p>
                 </div>
             </div>
         </div>
 
-        <div class="mt-20">
-            <div class="flex items-center justify-between mb-8 px-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
-                        <i class="fas fa-history text-xs text-blue-500"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-white uppercase tracking-tighter">Recent Logs</h3>
-                </div>
-                <button onclick="clearHistory()" class="text-[9px] font-black uppercase tracking-widest text-slate-600 hover:text-red-500 transition-colors">Clear All</button>
+        <div class="mt-16">
+            <div class="flex items-center justify-between mb-6 px-2">
+                <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                    <i class="fas fa-history text-blue-500 text-xs"></i> Session Logs
+                </h3>
+                <button onclick="clearHistory()" class="text-[9px] font-black uppercase text-slate-600 hover:text-red-500">Clear</button>
             </div>
-            <div id="historyList" class="grid grid-cols-1 gap-3"></div>
+            <div id="historyList" class="space-y-2"></div>
         </div>
     </main>
 
-    <footer class="mt-20 border-t border-white/5 bg-black/50 py-12 px-6">
-        <div class="max-w-4xl mx-auto text-center md:text-left">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-                <div>
-                    <h4 class="text-white font-black italic tracking-tighter text-lg mb-1 uppercase">Gamevoo</h4>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em]">The Future of Vision</p>
-                </div>
-                <div class="flex gap-10">
-                    <a href="privacy.html" class="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Privacy</a>
-                    <a href="terms.html" class="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Terms</a>
-                    <a href="https://wa.me/919559123316?text=Hello%20Nayra%20AI%20Support" target="_blank" class="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-white transition-colors flex items-center gap-1">
-                        <i class="fab fa-whatsapp"></i> Support
-                    </a>
-                </div>
+    <footer class="mt-10 border-t border-white/5 bg-black/40 py-10 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h4 class="text-white font-black italic text-md uppercase">Gamevoo</h4>
+                <p class="text-[8px] text-slate-600 uppercase tracking-widest">© 2026 Neural Network</p>
             </div>
-            <p class="text-center text-[9px] text-slate-700 font-bold uppercase tracking-[0.2em]">© 2026 Gamevoo. All Rights Reserved.</p>
+            <div class="flex gap-8">
+                <a href="privacy.html" class="text-[9px] font-bold uppercase text-slate-500 hover:text-blue-500">Privacy</a>
+                <a href="terms.html" class="text-[9px] font-bold uppercase text-slate-500 hover:text-blue-500">Terms</a>
+                <a href="https://wa.me/919559123316" target="_blank" class="text-[9px] font-bold uppercase text-blue-500 hover:text-white flex items-center gap-1">
+                    <i class="fab fa-whatsapp"></i> Support
+                </a>
+            </div>
         </div>
     </footer>
 
     <script>
         const textarea = document.getElementById('userInput');
+        const API_KEY = "AIzaSyCfuy0GZkw-Ua5Mga2RelZLMsryT1VnGE8";
+
         textarea.addEventListener('input', () => {
             document.getElementById('charCount').innerText = `${textarea.value.length}/500`;
         });
@@ -170,60 +141,50 @@
         let historyData = JSON.parse(localStorage.getItem('nayra_history')) || [];
         renderHistory();
 
-        // API Configuration
-        const API_KEY = "AIzaSyCfuy0GZkw-Ua5Mga2RelZLMsryT1VnGE8";
-
         async function processAI() {
-            const input = textarea.value;
+            const input = textarea.value.trim();
             const btn = document.getElementById('genBtn');
             const resultArea = document.getElementById('resultArea');
             const aiAnswer = document.getElementById('aiAnswer');
             const proPrompt = document.getElementById('proPrompt');
             
-            if(!input.trim()) return;
+            if(!input) return;
 
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Connecting to Neural Engine...';
-            btn.classList.add('opacity-80', 'pointer-events-none');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            btn.classList.add('opacity-70', 'pointer-events-none');
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Respond as Nayra AI, a professional neural engine. Provide a helpful, concise answer to: " + input }] }]
+                        contents: [{ parts: [{ text: "Provide a professional and helpful response as Nayra AI: " + input }] }]
                     })
                 });
 
                 const data = await response.json();
                 
                 if(data.candidates && data.candidates[0].content.parts[0].text) {
-                    const responseText = data.candidates[0].content.parts[0].text;
-                    
-                    // Display AI Response
-                    aiAnswer.innerText = responseText;
-                    
-                    // Generate Enhanced Image Prompt (Purana logic)
-                    proPrompt.innerText = `(Masterpiece:1.2), (ultra-detailed), ${input}, 8k resolution, raytracing, volumetric lighting, unreal engine 5 render.`;
-                    
+                    const text = data.candidates[0].content.parts[0].text;
+                    aiAnswer.innerText = text;
+                    proPrompt.innerText = `(Hyper-realistic AI Vision:1.3), ${input}, cinematic lighting, 8k, detailed textures, professional photography style.`;
                     resultArea.classList.remove('hidden');
                     saveToHistory(input);
                 } else {
-                    throw new Error("Invalid Response");
+                    throw new Error("Neural Link Denied");
                 }
-
-            } catch (error) {
-                console.error(error);
-                aiAnswer.innerText = "Error: Neural Link failed. Check connection or API quota.";
+            } catch (err) {
+                aiAnswer.innerText = "Error: Check API status or internet connection.";
                 resultArea.classList.remove('hidden');
             }
 
-            btn.innerHTML = '<i class="fas fa-bolt"></i> Generate Vision';
-            btn.classList.remove('opacity-80', 'pointer-events-none');
+            btn.innerHTML = '<i class="fas fa-bolt"></i> Process Query';
+            btn.classList.remove('opacity-70', 'pointer-events-none');
         }
 
         function saveToHistory(text) {
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            historyData.unshift({ text, time: timestamp });
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            historyData.unshift({ text, time });
             if(historyData.length > 5) historyData.pop();
             localStorage.setItem('nayra_history', JSON.stringify(historyData));
             renderHistory();
@@ -232,22 +193,22 @@
         function renderHistory() {
             const list = document.getElementById('historyList');
             if(historyData.length === 0) {
-                list.innerHTML = `<p class="text-slate-600 text-sm italic text-center py-10 border border-dashed border-white/5 rounded-3xl uppercase text-[10px] tracking-widest">No activity logs found</p>`;
+                list.innerHTML = `<p class="text-slate-700 text-[10px] text-center py-6 border border-dashed border-white/5 rounded-2xl uppercase tracking-[0.2em]">No Recent Logs</p>`;
                 return;
             }
             list.innerHTML = historyData.map(item => `
-                <div class="history-card bg-[#111827]/50 p-5 rounded-2xl flex items-center justify-between group">
-                    <div class="flex flex-col gap-1 overflow-hidden">
-                        <span class="text-blue-500 text-[8px] font-black uppercase tracking-widest">${item.time}</span>
-                        <span class="text-slate-300 text-sm truncate pr-4 font-medium">${item.text}</span>
+                <div class="history-card bg-white/5 p-4 rounded-xl flex justify-between items-center group">
+                    <div class="flex flex-col gap-1 overflow-hidden pr-4">
+                        <span class="text-blue-500 text-[7px] font-black uppercase tracking-widest">${item.time}</span>
+                        <p class="text-slate-400 text-xs truncate font-medium">${item.text}</p>
                     </div>
-                    <i class="fas fa-arrow-right text-slate-700 group-hover:text-blue-500 transition-colors text-xs"></i>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-800 group-hover:text-blue-500"></i>
                 </div>
             `).join('');
         }
 
         function clearHistory() {
-            if(confirm('Clear all logs?')) {
+            if(confirm('Clear session logs?')) {
                 historyData = [];
                 localStorage.removeItem('nayra_history');
                 renderHistory();
@@ -255,11 +216,8 @@
         }
 
         function copyPrompt() {
-            const text = document.getElementById('proPrompt').innerText;
-            navigator.clipboard.writeText(text);
-            const btn = event.currentTarget;
-            btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
-            setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
+            navigator.clipboard.writeText(document.getElementById('proPrompt').innerText);
+            alert('Vision Prompt Copied!');
         }
     </script>
 </body> 
