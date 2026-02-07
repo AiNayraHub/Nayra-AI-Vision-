@@ -56,7 +56,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0a0c10; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
@@ -113,7 +112,7 @@
                             <i class="fas fa-robot text-blue-500 text-xs"></i>
                             <span class="text-blue-400 text-[9px] font-black uppercase tracking-widest">Nayra Analysis</span>
                         </div>
-                        <p id="aiAnswer" class="text-slate-300 text-sm leading-relaxed"></p>
+                        <p id="aiAnswer" class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
                     </div>
 
                     <div class="bg-black/60 p-6 rounded-[30px] border border-white/5 relative group">
@@ -139,63 +138,87 @@
                 </div>
                 <button onclick="clearHistory()" class="text-[9px] font-black uppercase tracking-widest text-slate-600 hover:text-red-500 transition-colors">Clear All</button>
             </div>
-            <div id="historyList" class="grid grid-cols-1 gap-3">
-                </div>
+            <div id="historyList" class="grid grid-cols-1 gap-3"></div>
         </div>
     </main>
 
     <footer class="mt-20 border-t border-white/5 bg-black/50 py-12 px-6">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto text-center md:text-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-                <div class="text-center md:text-left">
-                    <h4 class="text-white font-black italic tracking-tighter text-lg mb-1">NAYRA AI</h4>
+                <div>
+                    <h4 class="text-white font-black italic tracking-tighter text-lg mb-1 uppercase">Gamevoo</h4>
                     <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em]">The Future of Vision</p>
                 </div>
                 <div class="flex gap-10">
                     <a href="privacy.html" class="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Privacy</a>
                     <a href="terms.html" class="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Terms</a>
-                    <a href="https://wa.me/919559123316?text=Hello%20Nayra%20AI%20Support,%20I%20need%20assistance." target="_blank" class="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-white transition-colors flex items-center gap-1">
+                    <a href="https://wa.me/919559123316?text=Hello%20Nayra%20AI%20Support" target="_blank" class="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-white transition-colors flex items-center gap-1">
                         <i class="fab fa-whatsapp"></i> Support
                     </a>
                 </div>
             </div>
-            <p class="text-center text-[9px] text-slate-700 font-bold uppercase tracking-[0.2em]">© 2026 AI Nayra Hub. All Rights Reserved.</p>
+            <p class="text-center text-[9px] text-slate-700 font-bold uppercase tracking-[0.2em]">© 2026 Gamevoo. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
-        // Character Counter
         const textarea = document.getElementById('userInput');
         textarea.addEventListener('input', () => {
             document.getElementById('charCount').innerText = `${textarea.value.length}/500`;
         });
 
-        // Initialize History from LocalStorage
         let historyData = JSON.parse(localStorage.getItem('nayra_history')) || [];
         renderHistory();
 
-        function processAI() {
+        // API Configuration
+        const API_KEY = "AIzaSyCfuy0GZkw-Ua5Mga2RelZLMsryT1VnGE8";
+
+        async function processAI() {
             const input = textarea.value;
             const btn = document.getElementById('genBtn');
+            const resultArea = document.getElementById('resultArea');
+            const aiAnswer = document.getElementById('aiAnswer');
+            const proPrompt = document.getElementById('proPrompt');
             
             if(!input.trim()) return;
 
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Neural Processing...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Connecting to Neural Engine...';
             btn.classList.add('opacity-80', 'pointer-events-none');
 
-            setTimeout(() => {
-                const answer = "Nayra AI has processed your request. Deep neural analysis for '" + input + "' is complete. Optimization layers applied.";
-                const prompt = "(Masterpiece:1.2), (ultra-detailed), " + input + ", 8k resolution, raytracing, volumetric lighting, sharp focus, professional color grading, unreal engine 5 render.";
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Respond as Nayra AI, a professional neural engine. Provide a helpful, concise answer to: " + input }] }]
+                    })
+                });
 
-                document.getElementById('aiAnswer').innerText = answer;
-                document.getElementById('proPrompt').innerText = prompt;
-                document.getElementById('resultArea').classList.remove('hidden');
+                const data = await response.json();
                 
-                saveToHistory(input);
+                if(data.candidates && data.candidates[0].content.parts[0].text) {
+                    const responseText = data.candidates[0].content.parts[0].text;
+                    
+                    // Display AI Response
+                    aiAnswer.innerText = responseText;
+                    
+                    // Generate Enhanced Image Prompt (Purana logic)
+                    proPrompt.innerText = `(Masterpiece:1.2), (ultra-detailed), ${input}, 8k resolution, raytracing, volumetric lighting, unreal engine 5 render.`;
+                    
+                    resultArea.classList.remove('hidden');
+                    saveToHistory(input);
+                } else {
+                    throw new Error("Invalid Response");
+                }
 
-                btn.innerHTML = '<i class="fas fa-bolt"></i> Generate Vision';
-                btn.classList.remove('opacity-80', 'pointer-events-none');
-            }, 1500);
+            } catch (error) {
+                console.error(error);
+                aiAnswer.innerText = "Error: Neural Link failed. Check connection or API quota.";
+                resultArea.classList.remove('hidden');
+            }
+
+            btn.innerHTML = '<i class="fas fa-bolt"></i> Generate Vision';
+            btn.classList.remove('opacity-80', 'pointer-events-none');
         }
 
         function saveToHistory(text) {
@@ -212,7 +235,6 @@
                 list.innerHTML = `<p class="text-slate-600 text-sm italic text-center py-10 border border-dashed border-white/5 rounded-3xl uppercase text-[10px] tracking-widest">No activity logs found</p>`;
                 return;
             }
-
             list.innerHTML = historyData.map(item => `
                 <div class="history-card bg-[#111827]/50 p-5 rounded-2xl flex items-center justify-between group">
                     <div class="flex flex-col gap-1 overflow-hidden">
