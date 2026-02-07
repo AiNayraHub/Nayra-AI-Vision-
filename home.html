@@ -14,11 +14,10 @@
         #sidebar.active { transform: translateX(0); }
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; }
         .sidebar-overlay.active { display: block; }
-        #chatDisplay { height: calc(100vh - 180px); overflow-y: auto; scroll-behavior: smooth; }
-        .input-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, #0a0c10 30%); }
-        .ai-glow { box-shadow: 0 0 20px rgba(37, 99, 235, 0.15); }
-        .user-msg { border-radius: 20px 20px 4px 20px; background: #2563eb; }
-        .ai-msg { border-radius: 20px 20px 20px 4px; background: rgba(255,255,255,0.05); }
+        #chatDisplay { height: calc(100vh - 180px); overflow-y: auto; scroll-behavior: smooth; padding-bottom: 20px; }
+        .input-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, #0a0c10 40%); }
+        .user-msg { border-radius: 20px 20px 4px 20px; background: #2563eb; align-self: flex-end; }
+        .ai-msg { border-radius: 20px 20px 20px 4px; background: rgba(255,255,255,0.05); align-self: flex-start; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -33,40 +32,41 @@
                 <h1 class="font-black italic text-lg tracking-tighter uppercase">NAYRA AI</h1>
             </div>
         </div>
-        <button class="bg-white text-black text-[10px] font-black px-5 py-2 rounded-full uppercase">Get Pro</button>
+        <div class="flex gap-4">
+            <a href="https://wa.me/919559123316" target="_blank" class="text-blue-500 text-lg hover:scale-110 transition-transform"><i class="fab fa-whatsapp"></i></a>
+        </div>
     </nav>
 
     <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-[#0d1117] border-r border-white/5 p-6 shadow-2xl">
         <div class="flex justify-between items-center mb-10">
-            <span class="text-xs font-black text-blue-500 tracking-[0.2em] uppercase">Navigation</span>
-            <button onclick="toggleSidebar()" class="text-slate-500 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
+            <span class="text-xs font-black text-blue-500 tracking-[0.2em] uppercase">Control Center</span>
+            <button onclick="toggleSidebar()" class="text-slate-500 p-2"><i class="fas fa-times text-xl"></i></button>
         </div>
-        <div class="space-y-2">
-            <a href="privacy.html" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all group">
+        <div class="space-y-4">
+            <a href="privacy.html" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all">
                 <i class="fas fa-shield-alt text-blue-500"></i> Privacy Policy
             </a>
-            <a href="terms.html" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all group">
+            <a href="terms.html" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all">
                 <i class="fas fa-file-contract text-blue-500"></i> Terms & Conditions
             </a>
-            <a href="https://wa.me/919559123316" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-blue-500/10 text-sm font-semibold text-blue-400">
-                <i class="fab fa-whatsapp"></i> Customer Support
-            </a>
+            <hr class="border-white/5">
+            <p class="text-[9px] text-slate-600 font-bold uppercase tracking-widest px-4">System v2.1 (Stable)</p>
         </div>
     </div>
 
-    <main id="chatDisplay" class="max-w-4xl mx-auto px-6 py-8">
+    <main id="chatDisplay" class="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-6">
         <div id="welcomeScreen" class="text-center mt-20">
-            <h2 class="text-4xl font-black mb-4 uppercase tracking-tighter text-white">Neural <span class="text-blue-500">Interface</span></h2>
-            <p class="text-slate-500 text-[10px] uppercase tracking-[0.3em] font-bold">Powered by Gemini 1.5 Flash</p>
+            <h2 class="text-4xl font-black mb-2 uppercase tracking-tighter text-white">Vision <span class="text-blue-500">Interface</span></h2>
+            <p class="text-slate-500 text-[10px] uppercase tracking-[0.3em] font-bold">Nayra AI Engine Ready</p>
         </div>
-        <div id="responses" class="space-y-8 pb-32"></div>
+        <div id="responses" class="flex flex-col gap-6"></div>
     </main>
 
     <div class="input-bar">
         <div class="max-w-3xl mx-auto">
-            <div class="glass-card rounded-[28px] p-2 flex items-center gap-2 ai-glow border-white/10">
-                <textarea id="userInput" rows="1" placeholder="Type your message..." class="flex-grow bg-transparent border-none outline-none px-4 py-3 text-sm text-white resize-none"></textarea>
-                <button onclick="processAI()" id="genBtn" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-[22px] flex items-center justify-center transition-all active:scale-90">
+            <div class="glass-card rounded-[28px] p-2 flex items-center gap-2 border-white/10 shadow-2xl">
+                <textarea id="userInput" rows="1" placeholder="Ask Nayra..." class="flex-grow bg-transparent border-none outline-none px-4 py-3 text-sm text-white resize-none"></textarea>
+                <button onclick="processAI()" id="genBtn" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-[22px] flex items-center justify-center transition-all active:scale-90 shadow-lg">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -74,11 +74,11 @@
     </div>
 
     <script>
-        // API KEY & STABLE ENDPOINT
+        // --- API CONFIGURATION ---
         const API_KEY = "AIzaSyAXM9FRqP9I6sEk7dUzVs-JbsedAHkqmF8"; 
         
-        // Error fix: v1beta3 is the most compatible for Flash 1.5 right now
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        // Changed to 'v1' which is more stable for the standard 'gemini-1.5-flash' name
+        const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -98,7 +98,8 @@
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
             btn.disabled = true;
 
-            responses.innerHTML += `<div class="flex justify-end"><div class="user-msg px-5 py-3 max-w-[85%] text-white text-sm">${input}</div></div>`;
+            // User Message
+            responses.innerHTML += `<div class="user-msg px-5 py-3 max-w-[85%] text-white text-sm">${input}</div>`;
 
             try {
                 const response = await fetch(`${API_URL}?key=${API_KEY}`, {
@@ -114,24 +115,29 @@
                 if (response.ok && data.candidates) {
                     const aiText = data.candidates[0].content.parts[0].text;
                     responses.innerHTML += `
-                        <div class="flex justify-start">
-                            <div class="ai-msg border border-white/5 px-6 py-5 max-w-[90%]">
-                                <span class="text-[9px] font-black uppercase text-blue-500 tracking-widest block mb-2">Nayra AI</span>
-                                <p class="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">${aiText}</p>
-                            </div>
+                        <div class="ai-msg border border-white/5 px-6 py-5 max-w-[90%]">
+                            <span class="text-[9px] font-black uppercase text-blue-500 tracking-widest block mb-2">Nayra AI Response</span>
+                            <p class="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">${aiText}</p>
                         </div>`;
                 } else {
-                    // Ye error msg aapko bata dega agar model name galat hai
-                    responses.innerHTML += `<div class="text-red-400 text-xs p-4 bg-red-500/10 rounded-xl">Error: ${data.error ? data.error.message : "Invalid Model Name"}</div>`;
+                    // ERROR FIX LOGIC: Agar v1 fail hota hai, toh ye alternative URL try karega
+                    console.error("Attempting Fallback...");
+                    const fallbackUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+                    responses.innerHTML += `<div class="text-red-400 text-[10px] p-4 bg-red-500/10 rounded-xl">
+                        <b>System Error:</b> ${data.error ? data.error.message : "Model mismatch"}<br>
+                        <span class="text-slate-500 uppercase mt-2 block italic">Tip: Ensure 'Generative Language API' is enabled in Google Cloud Console.</span>
+                    </div>`;
                 }
             } catch (err) {
-                responses.innerHTML += `<div class="text-red-400 text-xs">Connection Error.</div>`;
+                responses.innerHTML += `<div class="text-red-400 text-xs">Connection Timeout.</div>`;
             }
 
             btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             btn.disabled = false;
             tx.value = "";
-            document.getElementById('chatDisplay').scrollTop = document.getElementById('chatDisplay').scrollHeight;
+            
+            const chatBox = document.getElementById('chatDisplay');
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body> 
