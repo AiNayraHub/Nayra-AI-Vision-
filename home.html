@@ -8,25 +8,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0c10; color: #e2e8f0; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0c10; color: #e2e8f0; overflow: hidden; }
         .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
         
         /* Sidebar Styles */
-        #sidebar { transition: transform 0.3s ease-in-out; transform: translateX(-100%); }
+        #sidebar { transition: transform 0.3s ease-in-out; transform: translateX(-100%); z-index: 100; }
         #sidebar.active { transform: translateX(0); }
-        
-        /* Input Bar at Bottom */
-        .input-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 800px; z-index: 40; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; }
+        .sidebar-overlay.active { display: block; }
         
         /* Message Area */
-        #chatDisplay { height: calc(100vh - 200px); overflow-y: auto; padding-bottom: 100px; scroll-behavior: smooth; }
+        #chatDisplay { height: calc(100vh - 180px); overflow-y: auto; scroll-behavior: smooth; }
         
-        .ai-glow { box-shadow: 0 0 20px rgba(37, 99, 235, 0.2); }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        /* Bottom Input */
+        .input-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, #0a0c10 30%); }
+        
+        .ai-glow { box-shadow: 0 0 20px rgba(37, 99, 235, 0.15); }
+        .user-msg { border-radius: 20px 20px 4px 20px; }
+        .ai-msg { border-radius: 20px 20px 20px 4px; }
     </style>
 </head>
 <body class="min-h-screen">
+
+    <div id="overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <nav class="bg-black/60 backdrop-blur-md sticky top-0 z-50 border-b border-white/5 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-4">
@@ -34,65 +38,78 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="flex items-center gap-2">
-                <div class="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/40">
+                <div class="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg">
                     <i class="fas fa-eye text-sm text-white"></i>
                 </div>
-                <h1 class="font-black italic text-lg tracking-tighter">NAYRA AI</h1>
+                <h1 class="font-black italic text-lg tracking-tighter uppercase">NAYRA AI</h1>
             </div>
         </div>
-        <button class="bg-white text-black text-[10px] font-black px-5 py-2 rounded-full uppercase tracking-widest">Pro</button>
+        <div class="flex items-center gap-3">
+            <span class="hidden md:block text-[10px] font-bold text-slate-500 uppercase tracking-widest">v2.0.7 Stable</span>
+            <button class="bg-white text-black text-[10px] font-black px-5 py-2 rounded-full uppercase">Get Pro</button>
+        </div>
     </nav>
 
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-[#0d1117] z-[60] border-r border-white/5 p-6 shadow-2xl">
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-[#0d1117] border-r border-white/5 p-6 shadow-2xl">
         <div class="flex justify-between items-center mb-10">
-            <span class="text-xs font-black text-blue-500 tracking-[0.2em] uppercase">Control Panel</span>
-            <button onclick="toggleSidebar()" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
+            <span class="text-xs font-black text-blue-500 tracking-[0.2em] uppercase">Navigation</span>
+            <button onclick="toggleSidebar()" class="text-slate-500 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
         </div>
         
-        <div class="space-y-4">
-            <a href="#" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all">
-                <i class="fas fa-shield-alt text-blue-500"></i> Privacy Policy
+        <div class="space-y-2">
+            <a href="/privacy-policy" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all group">
+                <i class="fas fa-shield-alt text-blue-500 group-hover:scale-110 transition-transform"></i> Privacy Policy
             </a>
-            <a href="#" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all">
-                <i class="fas fa-file-contract text-blue-500"></i> Terms & Conditions
+            <a href="/terms-conditions" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all group">
+                <i class="fas fa-file-contract text-blue-500 group-hover:scale-110 transition-transform"></i> Terms & Conditions
             </a>
-            <a href="https://wa.me/919559123316" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/5 text-sm font-semibold transition-all text-blue-400">
-                <i class="fab fa-whatsapp"></i> Customer Support
+            <a href="https://wa.me/919559123316" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-blue-500/10 text-sm font-semibold transition-all text-blue-400 group">
+                <i class="fab fa-whatsapp group-hover:rotate-12 transition-transform"></i> Customer Support
             </a>
-            <div class="pt-10 border-t border-white/5">
-                <p class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Version: NAYRA V2.0.6</p>
+        </div>
+
+        <div class="absolute bottom-10 left-6 right-6 p-4 rounded-2xl bg-white/5 border border-white/5">
+            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1">API Status</p>
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-[10px] text-white font-bold uppercase">Connected (v1)</span>
             </div>
         </div>
     </div>
 
     <main id="chatDisplay" class="max-w-4xl mx-auto px-6 py-8">
         <div id="welcomeScreen" class="text-center mt-20">
-            <h2 class="text-4xl font-black mb-4 uppercase tracking-tighter">How can I help <span class="text-blue-500">Today?</span></h2>
-            <p class="text-slate-500 text-sm max-w-md mx-auto">Nayra Vision Hub is now connected to your Google Cloud API. Type something below to start.</p>
+            <div class="w-16 h-16 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
+                <i class="fas fa-bolt text-blue-500 text-2xl"></i>
+            </div>
+            <h2 class="text-4xl font-black mb-4 uppercase tracking-tighter text-white">Neural <span class="text-blue-500">Interface</span></h2>
+            <p class="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed uppercase tracking-widest font-bold">The Next Evolution of AI starts here.</p>
         </div>
-        <div id="responses" class="space-y-6"></div>
+        <div id="responses" class="space-y-8 pb-32"></div>
     </main>
 
-    <div class="input-container">
-        <div class="glass-card rounded-[30px] p-2 flex items-center gap-3 ai-glow">
-            <textarea id="userInput" rows="1" placeholder="Type your message..." class="flex-grow bg-transparent border-none outline-none px-4 py-3 text-sm text-white resize-none max-h-32"></textarea>
-            <button onclick="processAI()" id="genBtn" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+    <div class="input-bar">
+        <div class="max-w-3xl mx-auto">
+            <div class="glass-card rounded-[28px] p-2 flex items-center gap-2 ai-glow border-white/10">
+                <textarea id="userInput" rows="1" placeholder="Type your message..." class="flex-grow bg-transparent border-none outline-none px-4 py-3 text-sm text-white resize-none max-h-32"></textarea>
+                <button onclick="processAI()" id="genBtn" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-[22px] flex items-center justify-center transition-all active:scale-90">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <p class="text-center text-[8px] text-slate-700 mt-4 font-black uppercase tracking-[0.3em]">Nayra Neural Network System</p>
         </div>
-        <p class="text-center text-[9px] text-slate-600 mt-3 font-bold uppercase tracking-widest">Nayra AI Vision Hub © 2026</p>
     </div>
 
     <script>
-        // API Configuration (v1beta as per your screenshot preference)
+        // VERSION FIXED: v1 use kiya hai jo flash ke saath 100% chalta hai
         const API_KEY = "AIzaSyAXM9FRqP9I6sEk7dUzVs-JbsedAHkqmF8";
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
-        // Auto-expand textarea
         const tx = document.getElementById('userInput');
         tx.addEventListener("input", function() {
             this.style.height = "auto";
@@ -107,16 +124,15 @@
 
             if(!input) return;
 
-            // UI Updates
             welcome.classList.add('hidden');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-sm"></i>';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
             btn.disabled = true;
 
-            // Add User Bubble
+            // User Message
             responses.innerHTML += `
-                <div class="flex justify-end mb-4">
-                    <div class="bg-blue-600/20 border border-blue-500/30 px-5 py-3 rounded-[25px] rounded-tr-none max-w-[80%]">
-                        <p class="text-sm text-white">${input}</p>
+                <div class="flex justify-end">
+                    <div class="bg-blue-600 user-msg px-5 py-3 max-w-[85%] shadow-xl shadow-blue-600/10">
+                        <p class="text-sm font-medium text-white">${input}</p>
                     </div>
                 </div>
             `;
@@ -135,37 +151,49 @@
                 if (response.ok && data.candidates) {
                     const aiText = data.candidates[0].content.parts[0].text;
                     responses.innerHTML += `
-                        <div class="flex justify-start mb-4">
-                            <div class="bg-white/5 border border-white/10 px-6 py-5 rounded-[30px] rounded-tl-none max-w-[90%]">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <i class="fas fa-robot text-blue-500 text-[10px]"></i>
-                                    <span class="text-[9px] font-black uppercase text-blue-400 tracking-widest">Nayra Vision</span>
+                        <div class="flex justify-start">
+                            <div class="bg-white/5 border border-white/5 ai-msg px-6 py-5 max-w-[90%] shadow-2xl">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                    <span class="text-[9px] font-black uppercase text-blue-500 tracking-widest">Nayra Intelligence</span>
                                 </div>
                                 <p class="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">${aiText}</p>
-                                <button onclick="this.parentElement.style.opacity='0.5'" class="mt-4 text-[10px] text-slate-500 uppercase font-bold"><i class="fas fa-copy mr-1"></i> Copy Response</button>
+                                <div class="mt-4 pt-4 border-t border-white/5 flex gap-4">
+                                    <button onclick="copyText(this)" class="text-[9px] font-bold text-slate-500 uppercase hover:text-white"><i class="fas fa-copy mr-1"></i> Copy</button>
+                                </div>
                             </div>
                         </div>
                     `;
                 } else {
-                    // Specific Error handling for your 404/400 problems
-                    let errorMsg = data.error ? data.error.message : "Connection Blocked";
+                    // Yahan Error Handling Fix ki hai
+                    let errorDetails = data.error ? data.error.message : "Internal Error";
                     responses.innerHTML += `
-                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-red-400 text-xs">
-                            <strong>System Error:</strong> ${errorMsg}<br>
-                            <small class="mt-2 block">Check: Console > API Key > API Restrictions (Set to None)</small>
+                        <div class="bg-red-500/10 border border-red-500/20 p-5 rounded-2xl text-red-400 text-xs">
+                            <div class="font-black uppercase mb-1">Configuration Error</div>
+                            ${errorDetails}
+                            <div class="mt-2 pt-2 border-t border-red-500/10 text-[10px] opacity-60 uppercase font-bold">Check: API Version or Key Restrictions</div>
                         </div>
                     `;
                 }
             } catch (err) {
-                responses.innerHTML += `<div class="text-red-400 text-xs">Offline: Check your internet connection.</div>`;
+                responses.innerHTML += `<div class="text-red-400 text-xs font-bold uppercase">Network Offline</div>`;
             }
 
-            // Cleanup
             btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             btn.disabled = false;
             tx.value = "";
             tx.style.height = "auto";
-            document.getElementById('chatDisplay').scrollTop = document.getElementById('chatDisplay').scrollHeight;
+            
+            // Auto scroll
+            const chatBox = document.getElementById('chatDisplay');
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        }
+
+        function copyText(btn) {
+            const text = btn.parentElement.parentElement.querySelector('p').innerText;
+            navigator.clipboard.writeText(text);
+            btn.innerHTML = '<i class="fas fa-check mr-1 text-green-500"></i> Copied';
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy mr-1"></i> Copy'; }, 2000);
         }
     </script>
 </body> 
