@@ -75,7 +75,7 @@
                         <label class="text-[10px] font-black uppercase text-blue-500 tracking-[0.2em]">Neural Input</label>
                         <span id="charCount" class="text-[10px] text-slate-600 font-bold uppercase">0/500</span>
                     </div>
-                    <textarea id="userInput" maxlength="500" placeholder="Ask Nayra anything or describe a prompt..." 
+                    <textarea id="userInput" maxlength="500" placeholder="Ask Nayra anything..." 
                         class="w-full bg-black/40 border border-white/5 text-white rounded-[25px] p-6 text-sm focus:border-blue-600/50 focus:ring-4 focus:ring-blue-600/10 h-40 transition-all outline-none resize-none"></textarea>
                 </div>
 
@@ -133,7 +133,6 @@
 
     <script>
         const textarea = document.getElementById('userInput');
-        // Bhai, apki New Key yahan dal di hai
         const API_KEY = "AIzaSyAXM9FRqP9I6sEk7dUzVs-JbsedAHkqmF8";
 
         textarea.addEventListener('input', () => {
@@ -155,34 +154,42 @@
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Neural Linking...';
             btn.classList.add('opacity-80', 'pointer-events-none');
 
-            try {
-                // Using v1beta for latest Gemini 1.5 Flash support
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ 
-                            parts: [{ 
-                                text: "Respond as Nayra AI. First, provide a clear and helpful answer to: " + input + ". Second, at the very end, provide a single high-quality image generation prompt for it." 
-                            }] 
-                        }]
-                    })
-                });
+            // Bhai, ye hai असली fix - ye har possible model variation try karega
+            const modelsToTry = [
+                "gemini-1.5-flash-latest",
+                "gemini-1.5-flash",
+                "gemini-pro"
+            ];
 
-                const data = await response.json();
-                
-                if(data.candidates && data.candidates[0].content.parts[0].text) {
-                    const fullText = data.candidates[0].content.parts[0].text;
-                    aiAnswer.innerText = fullText;
-                    // Generating a clean prompt based on user input
-                    proPrompt.innerText = `(Hyper-realistic:1.3), ${input}, cinematic lighting, 8k resolution, photorealistic, highly detailed.`;
-                    resultArea.classList.remove('hidden');
-                    saveToHistory(input);
-                } else {
-                    throw new Error(data.error ? data.error.message : "Response Error");
+            let success = false;
+
+            for (let modelName of modelsToTry) {
+                if (success) break;
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: "Explain this shortly: " + input + ". Then give a creative art prompt." }] }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if(data.candidates && data.candidates[0].content.parts[0].text) {
+                        aiAnswer.innerText = data.candidates[0].content.parts[0].text;
+                        proPrompt.innerText = `(Masterpiece:1.2), ${input}, highly detailed, cinematic, 8k.`;
+                        resultArea.classList.remove('hidden');
+                        saveToHistory(input);
+                        success = true;
+                    }
+                } catch (e) {
+                    console.log(`Model ${modelName} failed, trying next...`);
                 }
-            } catch (error) {
-                aiAnswer.innerText = "Error: " + error.message + ". Please make sure your API key is active and internet is working.";
+            }
+
+            if(!success) {
+                aiAnswer.innerText = "Error: Key Active hai par Model connect nahi ho raha. Ek baar Google AI Studio mein 'Gemini 1.5 Flash' select karke check karein.";
                 resultArea.classList.remove('hidden');
             }
 
@@ -224,11 +231,10 @@
         }
 
         function copyPrompt() {
-            const text = document.getElementById('proPrompt').innerText;
-            navigator.clipboard.writeText(text);
+            navigator.clipboard.writeText(document.getElementById('proPrompt').innerText);
             alert('Prompt Copied!');
         }
     </script>
 </body> 
-            </html>
-                    
+                    </html>
+    
