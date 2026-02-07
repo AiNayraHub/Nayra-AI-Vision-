@@ -9,14 +9,15 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: #e2e8f0; overflow: hidden; }
-        .glass-header { background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); border-b: 1px solid rgba(255,255,255,0.05); }
-        .sidebar { transition: transform 0.3s ease; z-index: 100; background: #0d1117; border-right: 1px solid rgba(255,255,255,0.05); }
+        .glass-header { background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; background: #0d1117; border-right: 1px solid rgba(255,255,255,0.05); }
         .sidebar.closed { transform: translateX(-100%); }
         #chatDisplay { height: calc(100vh - 160px); overflow-y: auto; padding-bottom: 120px; scroll-behavior: smooth; }
         .input-area { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, #05070a 40%); padding: 20px; }
-        .msg-ai { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px 18px 18px 4px; }
-        .msg-user { background: #2563eb; border-radius: 18px 18px 4px 18px; margin-left: auto; }
+        .msg-ai { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px 18px 18px 4px; animation: fadeIn 0.3s ease; }
+        .msg-user { background: #2563eb; border-radius: 18px 18px 4px 18px; margin-left: auto; animation: fadeIn 0.3s ease; }
         .pro-btn { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: black; font-weight: 800; font-size: 10px; padding: 6px 14px; border-radius: 99px; text-transform: uppercase; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
@@ -51,7 +52,7 @@
                 <span class="font-black italic tracking-tighter text-lg uppercase text-white">Nayra <span class="text-blue-500">AI</span></span>
             </div>
         </div>
-        <button class="pro-btn active:scale-95 transition-transform">Get Pro</button>
+        <button class="pro-btn active:scale-95 transition-transform shadow-lg shadow-yellow-500/20">Get Pro</button>
     </header>
 
     <main id="chatDisplay" class="max-w-3xl mx-auto px-6 py-8 space-y-6 flex flex-col">
@@ -59,16 +60,16 @@
             <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-600/20">
                 <i class="fas fa-robot text-blue-500 text-2xl"></i>
             </div>
-            <h1 class="text-3xl font-extrabold text-white mb-2">Hello, I'm Nayra</h1>
-            <p class="text-slate-500 text-sm">Vision Engine v1.0 • How can I help you tonight?</p>
+            <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Nayra AI Vision</h1>
+            <p class="text-slate-500 text-sm">Professional AI Engine v1.1 • Ready to assist you</p>
         </div>
         <div id="chatContent" class="space-y-6"></div>
     </main>
 
     <div class="input-area">
-        <div class="max-w-2xl mx-auto relative">
-            <div class="bg-[#0f172a] border border-white/10 rounded-[24px] p-2 flex items-center shadow-2xl focus-within:border-blue-500/50 transition-all">
-                <textarea id="userInput" rows="1" placeholder="Type your message..." class="flex-grow bg-transparent border-none outline-none px-4 text-sm text-white resize-none max-h-32"></textarea>
+        <div class="max-w-2xl mx-auto relative px-4">
+            <div class="bg-[#0f172a] border border-white/10 rounded-[24px] p-2 flex items-center shadow-2xl focus-within:border-blue-500/50 transition-all border-glow">
+                <textarea id="userInput" rows="1" placeholder="Ask Nayra anything..." class="flex-grow bg-transparent border-none outline-none px-4 text-sm text-white resize-none max-h-32"></textarea>
                 <button id="sendBtn" onclick="askNayra()" class="w-11 h-11 bg-blue-600 hover:bg-blue-500 text-white rounded-full flex items-center justify-center transition-all active:scale-90 shadow-lg shadow-blue-600/30">
                     <i class="fas fa-paper-plane text-sm"></i>
                 </button>
@@ -77,7 +78,8 @@
     </div>
 
     <script>
-        const API_TOKEN = "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";
+        // UPDATED READ TOKEN & STABLE LOGIC
+        const API_TOKEN = "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";
         const MODEL_ID = "google/gemma-1.1-2b-it";
 
         function toggleMenu() {
@@ -93,20 +95,16 @@
 
             if (!userText) return;
 
-            // UI Changes
             welcome.style.display = 'none';
             inputField.value = '';
             sendBtn.disabled = true;
-            sendBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            sendBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-xs"></i>';
             
-            // User Message UI
             chatContent.innerHTML += `<div class="msg-user px-5 py-3 max-w-[85%] text-sm text-white shadow-lg">${userText}</div>`;
             
-            // Loading Placeholder
             const loadingId = "load-" + Date.now();
-            chatContent.innerHTML += `<div id="${loadingId}" class="msg-ai px-5 py-4 max-w-[90%] text-sm text-slate-400 italic">Nayra is thinking...</div>`;
+            chatContent.innerHTML += `<div id="${loadingId}" class="msg-ai px-5 py-4 max-w-[90%] text-sm text-slate-400 italic">Nayra is processing...</div>`;
             
-            // Scroll to bottom
             const chatBox = document.getElementById('chatDisplay');
             chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -131,28 +129,27 @@
                 } else if (data.generated_text) {
                     aiResponse = data.generated_text;
                 } else if (data.error) {
-                    aiResponse = "Server is a bit busy. Error: " + data.error;
+                    aiResponse = "System is initializing. Please wait a moment and try again.";
                 }
 
-                // Remove user prompt from response if model repeats it
-                const cleanText = aiResponse.replace(userText, "").trim() || "I'm sorry, I couldn't process that. Try again.";
+                // UI Cleanup for response
+                const cleanText = aiResponse.replace(userText, "").trim() || "Bhai, main samajh nahi paayi, ek baar phir se likhiye.";
 
                 const loadElem = document.getElementById(loadingId);
                 loadElem.classList.remove('italic', 'text-slate-400');
                 loadElem.innerHTML = `
-                    <span class="text-[9px] font-black uppercase text-blue-500 tracking-widest block mb-2 underline">Nayra AI Vision Response</span>
+                    <span class="text-[10px] font-black uppercase text-blue-500 tracking-widest block mb-2">Nayra AI Vision</span>
                     <p class="text-slate-200 leading-relaxed whitespace-pre-wrap">${cleanText}</p>
                 `;
             } catch (error) {
-                document.getElementById(loadingId).innerHTML = "Connection Error. Please check your network.";
+                document.getElementById(loadingId).innerHTML = "Error connecting to AI. Please check your network.";
             }
 
             sendBtn.disabled = false;
             sendBtn.innerHTML = '<i class="fas fa-paper-plane text-sm"></i>';
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
         }
 
-        // Handle Enter Key
         document.getElementById('userInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
