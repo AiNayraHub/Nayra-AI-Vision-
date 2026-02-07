@@ -154,42 +154,42 @@
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Neural Linking...';
             btn.classList.add('opacity-80', 'pointer-events-none');
 
-            // Bhai, ye hai असली fix - ye har possible model variation try karega
-            const modelsToTry = [
-                "gemini-1.5-flash-latest",
-                "gemini-1.5-flash",
-                "gemini-pro"
+            // Bhai, ye hai असली Magic - ye har version ko ek ek karke try karega automatically
+            const config = [
+                { ver: 'v1beta', model: 'gemini-1.5-flash' },
+                { ver: 'v1', model: 'gemini-1.5-flash' },
+                { ver: 'v1beta', model: 'gemini-pro' }
             ];
 
             let success = false;
 
-            for (let modelName of modelsToTry) {
-                if (success) break;
+            for (let setup of config) {
+                if(success) break;
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/${setup.ver}/models/${setup.model}:generateContent?key=${API_KEY}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: "Explain this shortly: " + input + ". Then give a creative art prompt." }] }]
+                            contents: [{ parts: [{ text: "Respond as Nayra AI. Help with: " + input }] }]
                         })
                     });
 
                     const data = await response.json();
-                    
+
                     if(data.candidates && data.candidates[0].content.parts[0].text) {
                         aiAnswer.innerText = data.candidates[0].content.parts[0].text;
-                        proPrompt.innerText = `(Masterpiece:1.2), ${input}, highly detailed, cinematic, 8k.`;
+                        proPrompt.innerText = `(Cinematic:1.2), ${input}, 8k, digital art style.`;
                         resultArea.classList.remove('hidden');
                         saveToHistory(input);
                         success = true;
                     }
-                } catch (e) {
-                    console.log(`Model ${modelName} failed, trying next...`);
+                } catch (err) {
+                    console.log(`Failed version ${setup.ver}, trying next...`);
                 }
             }
 
             if(!success) {
-                aiAnswer.innerText = "Error: Key Active hai par Model connect nahi ho raha. Ek baar Google AI Studio mein 'Gemini 1.5 Flash' select karke check karein.";
+                aiAnswer.innerText = "Error: API is responding but connection is blocked. Check if your API Key has 'IP Restrictions' enabled in Google Console.";
                 resultArea.classList.remove('hidden');
             }
 
@@ -236,5 +236,4 @@
         }
     </script>
 </body> 
-                    </html>
-    
+</html>
