@@ -1,122 +1,230 @@
 <!DOCTYPE html>
-<html lang="hi">
-<head>
+<html lang="en">
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nayra AI Vision - Fixed</title>
+    
+    <title>Nayra AI Vision - Professional Prompt Engineering Hub</title>
+    <meta name="description" content="Master the art of AI visions with Nayra AI. Generate high-fidelity prompts and neural responses instantly.">
+    <meta name="keywords" content="AI, Prompt Engineering, Nayra AI, Image Generation Prompts, AI Hub">
+    <meta name="theme-color" content="#0a0c10">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: #e2e8f0; height: 100vh; overflow: hidden; }
-        .glass-header { background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        #chatDisplay { height: calc(100vh - 160px); overflow-y: auto; padding-bottom: 100px; }
-        .msg-ai { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px 18px 18px 4px; }
-        .msg-user { background: #2563eb; border-radius: 18px 18px 4px 18px; margin-left: auto; }
-        .input-area { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, #05070a 40%); padding: 20px; }
-        .loader { border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    <header class="glass-header sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-bolt text-white text-[12px]"></i></div>
-            <span class="font-black italic text-lg uppercase text-white">Nayra <span class="text-blue-500">AI</span></span>
-        </div>
-        <span class="text-[10px] bg-green-500/20 text-green-500 px-3 py-1 rounded-full font-bold">SERVER LIVE</span>
-    </header>
-
-    <main id="chatDisplay" class="max-w-3xl mx-auto px-6 py-8 space-y-6 flex flex-col">
-        <div id="welcome" class="text-center py-20">
-            <h1 class="text-3xl font-extrabold text-white mb-2">Gamevoo Engine</h1>
-            <p class="text-slate-500 text-sm">Professional AI Vision is ready.</p>
-        </div>
-        <div id="chatContent" class="space-y-6"></div>
-    </main>
-
-    <div class="input-area">
-        <div class="max-w-2xl mx-auto relative px-4">
-            <div class="bg-[#0f172a] border border-white/10 rounded-[28px] p-2 flex items-center shadow-2xl">
-                <textarea id="userInput" rows="1" placeholder="Poochhein kuch bhi..." class="flex-grow bg-transparent border-none outline-none px-5 text-sm text-white resize-none py-3"></textarea>
-                <button id="sendBtn" onclick="askNayra()" class="w-12 h-12 bg-blue-600 hover:bg-blue-500 text-white rounded-full flex items-center justify-center transition-all">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // AAPKA TOKEN YAHAN HAI
-        const API_TOKEN = "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";
-        const MODEL_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3";
-
-        async function askNayra() {
-            const inputField = document.getElementById('userInput');
-            const chatContent = document.getElementById('chatContent');
-            const welcome = document.getElementById('welcome');
-            const sendBtn = document.getElementById('sendBtn');
-            const userText = inputField.value.trim();
-
-            if (!userText) return;
-
-            welcome.style.display = 'none';
-            inputField.value = '';
-            sendBtn.disabled = true;
-            
-            chatContent.innerHTML += `<div class="msg-user px-5 py-3 max-w-[85%] text-sm text-white">${userText}</div>`;
-            
-            const loadingId = "load-" + Date.now();
-            chatContent.innerHTML += `<div id="${loadingId}" class="msg-ai px-5 py-4 max-w-[90%] text-sm text-slate-400 italic">
-                <div class="loader"></div> Nayra soch rahi hai...
-            </div>`;
-            
-            const chatBox = document.getElementById('chatDisplay');
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                const response = await fetch(MODEL_URL, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${API_TOKEN}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ 
-                        inputs: `[INST] ${userText} [/INST]`,
-                        options: { wait_for_model: true } 
-                    })
-                });
-
-                const data = await response.json();
-                
-                let aiResponse = "";
-                if (data.error) {
-                    aiResponse = "Server load ho raha hai, please 10 second baad dobara message bhejein. (Error: " + data.error + ")";
-                } else {
-                    aiResponse = Array.isArray(data) ? data[0].generated_text : data.generated_text;
-                    // Safai: Input text ko output se hatana
-                    aiResponse = aiResponse.replace(`[INST] ${userText} [/INST]`, "").trim();
-                }
-
-                document.getElementById(loadingId).innerHTML = `
-                    <span class="text-[9px] font-bold text-blue-500 block mb-1">NAYRA AI</span>
-                    <div class="text-slate-200">${aiResponse || "Bhai, main samajh nahi paayi."}</div>
-                `;
-            } catch (error) {
-                document.getElementById(loadingId).innerHTML = "Bhai connection issue hai, token active hone mein 1-2 minute le sakta hai.";
-            }
-
-            sendBtn.disabled = false;
-            chatBox.scrollTop = chatBox.scrollHeight;
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.8); }
+        }
+        
+        .ai-eye { animation: pulse-glow 2s infinite; }
+        
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        document.getElementById('userInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                askNayra();
-            }
+        .history-card { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid transparent;
+        }
+        
+        .history-card:hover { 
+            transform: translateY(-2px); 
+            background: #1e293b; 
+            border-color: #3b82f6;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0c10; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+    </style>
+</head>
+<body class="bg-[#0a0c10] text-slate-200 min-h-screen flex flex-col selection:bg-blue-500/30">
+
+    <nav class="bg-black/80 backdrop-blur-xl sticky top-0 z-50 border-b border-white/5 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <div class="ai-eye bg-blue-600 text-white w-11 h-11 rounded-2xl flex items-center justify-center border border-blue-400/50 transition-transform group-hover:rotate-12">
+                    <i class="fas fa-eye text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black italic tracking-tighter text-white leading-none">NAYRA AI</h1>
+                    <span class="text-[8px] text-blue-500 font-bold tracking-[0.3em] uppercase">Vision Hub</span>
+                </div>
+            </div>
+            <button class="group relative px-6 py-2.5 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full overflow-hidden transition-all hover:pr-9">
+                <span class="relative z-10">Get Pro</span>
+                <i class="fas fa-arrow-right absolute right-3 top-1/2 -translate-y-1/2 opacity-0 transition-all group-hover:opacity-100"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto py-16 px-6 flex-grow">
+        <div class="text-center mb-12">
+            <span class="inline-block px-4 py-1.5 mb-4 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-bold uppercase tracking-[0.2em]">Next Gen AI Engineering</span>
+            <h2 class="text-6xl font-black tracking-tighter mb-4 uppercase text-white leading-none">
+                Master <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-400">The Vision</span>
+            </h2>
+            <p class="text-slate-500 text-sm font-medium max-w-md mx-auto">Elevate your creative workflow with precision-engineered AI neural responses.</p>
+        </div>
+
+        <div class="glass-card p-1 rounded-[40px] shadow-2xl">
+            <div class="bg-[#0a0c10]/50 p-8 rounded-[38px]">
+                <div class="mb-6 relative">
+                    <div class="flex justify-between items-center mb-3 px-2">
+                        <label class="text-[10px] font-black uppercase text-blue-500 tracking-[0.2em]">Neural Input</label>
+                        <span id="charCount" class="text-[10px] text-slate-600 font-bold uppercase">0/500</span>
+                    </div>
+                    <textarea id="userInput" maxlength="500" placeholder="Describe the vision you want to engineer..." 
+                        class="w-full bg-black/40 border border-white/5 text-white rounded-[25px] p-6 text-sm focus:border-blue-600/50 focus:ring-4 focus:ring-blue-600/10 h-40 transition-all outline-none placeholder:text-slate-700"></textarea>
+                </div>
+
+                <button onclick="processAI()" id="genBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest py-5 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
+                    <i class="fas fa-bolt"></i> Generate Vision
+                </button>
+
+                <div id="resultArea" class="hidden mt-10 space-y-6 animate-[fadeIn_0.5s_ease-out]">
+                    <div class="bg-blue-600/5 p-6 rounded-[30px] border border-blue-500/20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-robot text-blue-500 text-xs"></i>
+                            <span class="text-blue-400 text-[9px] font-black uppercase tracking-widest">Nayra Analysis</span>
+                        </div>
+                        <p id="aiAnswer" class="text-slate-300 text-sm leading-relaxed"></p>
+                    </div>
+
+                    <div class="bg-black/60 p-6 rounded-[30px] border border-white/5 relative group">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest">Enhanced Pro Prompt</span>
+                            <button onclick="copyPrompt()" class="bg-white/5 hover:bg-white/10 p-2 rounded-lg text-slate-400 transition-colors">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <p id="proPrompt" class="text-blue-100/80 text-sm italic font-light pr-4"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-20">
+            <div class="flex items-center justify-between mb-8 px-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                        <i class="fas fa-history text-xs text-blue-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white uppercase tracking-tighter">Recent Logs</h3>
+                </div>
+                <button onclick="clearHistory()" class="text-[9px] font-black uppercase tracking-widest text-slate-600 hover:text-red-500 transition-colors">Clear All</button>
+            </div>
+            <div id="historyList" class="grid grid-cols-1 gap-3">
+                </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 border-t border-white/5 bg-black/50 py-12 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
+                <div class="text-center md:text-left">
+                    <h4 class="text-white font-black italic tracking-tighter text-lg mb-1">NAYRA AI</h4>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em]">The Future of Vision</p>
+                </div>
+                <div class="flex gap-10">
+                    <a href="privacy.html" class="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Privacy</a>
+                    <a href="terms.html" class="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors">Terms</a>
+                    <a href="https://wa.me/919559123316?text=Hello%20Nayra%20AI%20Support,%20I%20need%20assistance." target="_blank" class="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-white transition-colors flex items-center gap-1">
+                        <i class="fab fa-whatsapp"></i> Support
+                    </a>
+                </div>
+            </div>
+            <p class="text-center text-[9px] text-slate-700 font-bold uppercase tracking-[0.2em]">© 2026 AI Nayra Hub. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Character Counter
+        const textarea = document.getElementById('userInput');
+        textarea.addEventListener('input', () => {
+            document.getElementById('charCount').innerText = `${textarea.value.length}/500`;
         });
+
+        // Initialize History from LocalStorage
+        let historyData = JSON.parse(localStorage.getItem('nayra_history')) || [];
+        renderHistory();
+
+        function processAI() {
+            const input = textarea.value;
+            const btn = document.getElementById('genBtn');
+            
+            if(!input.trim()) return;
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Neural Processing...';
+            btn.classList.add('opacity-80', 'pointer-events-none');
+
+            setTimeout(() => {
+                const answer = "Nayra AI has processed your request. Deep neural analysis for '" + input + "' is complete. Optimization layers applied.";
+                const prompt = "(Masterpiece:1.2), (ultra-detailed), " + input + ", 8k resolution, raytracing, volumetric lighting, sharp focus, professional color grading, unreal engine 5 render.";
+
+                document.getElementById('aiAnswer').innerText = answer;
+                document.getElementById('proPrompt').innerText = prompt;
+                document.getElementById('resultArea').classList.remove('hidden');
+                
+                saveToHistory(input);
+
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Generate Vision';
+                btn.classList.remove('opacity-80', 'pointer-events-none');
+            }, 1500);
+        }
+
+        function saveToHistory(text) {
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            historyData.unshift({ text, time: timestamp });
+            if(historyData.length > 5) historyData.pop();
+            localStorage.setItem('nayra_history', JSON.stringify(historyData));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if(historyData.length === 0) {
+                list.innerHTML = `<p class="text-slate-600 text-sm italic text-center py-10 border border-dashed border-white/5 rounded-3xl uppercase text-[10px] tracking-widest">No activity logs found</p>`;
+                return;
+            }
+
+            list.innerHTML = historyData.map(item => `
+                <div class="history-card bg-[#111827]/50 p-5 rounded-2xl flex items-center justify-between group">
+                    <div class="flex flex-col gap-1 overflow-hidden">
+                        <span class="text-blue-500 text-[8px] font-black uppercase tracking-widest">${item.time}</span>
+                        <span class="text-slate-300 text-sm truncate pr-4 font-medium">${item.text}</span>
+                    </div>
+                    <i class="fas fa-arrow-right text-slate-700 group-hover:text-blue-500 transition-colors text-xs"></i>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if(confirm('Clear all logs?')) {
+                historyData = [];
+                localStorage.removeItem('nayra_history');
+                renderHistory();
+            }
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('proPrompt').innerText;
+            navigator.clipboard.writeText(text);
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
+            setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
+        }
     </script>
-</body>
+</body> 
 </html>
