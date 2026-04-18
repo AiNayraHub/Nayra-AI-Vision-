@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ai Nayra Vision – by Ai Nayra Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #03080f;
+      --bg2:       #060d1a;
+      --surface:   #0a1628;
+      --surface2:  #0d1d35;
+      --border:    rgba(59,130,246,0.12);
+      --border2:   rgba(99,179,237,0.18);
+      --accent:    #3b82f6;
+      --accent2:   #60a5fa;
+      --accent3:   #93c5fd;
+      --glow:      rgba(59,130,246,0.25);
+      --text:      #e8f1ff;
+      --muted:     #4a6080;
+      --muted2:    #6b8aaa;
+    }
+
+    html, body {
+      height: 100%; overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(59,130,246,.18); border-radius: 4px; }
+
+    /* ── BG Orbs ── */
+    .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .orb {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, var(--c) 0%, transparent 70%);
+    }
+    .orb1 { top:-10%; left:-8%;  width:55%; height:55%; --c:rgba(37,99,235,.13); }
+    .orb2 { bottom:-12%; right:-6%; width:48%; height:48%; --c:rgba(59,130,246,.09); }
+    .orb3 { top:38%; right:16%;  width:32%; height:32%; --c:rgba(147,197,253,.05); }
+
+    /* ── App Shell ── */
+    .app {
+      position: relative; z-index: 1;
+      height: 100vh; display: flex; flex-direction: column;
+      max-width: 900px; margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; gap: 13px;
+      padding: 0 22px; height: 64px; flex-shrink: 0;
+      background: rgba(3,8,15,.88); backdrop-filter: blur(22px);
+      border-bottom: 1px solid var(--border);
+      position: relative; z-index: 20;
+    }
+    .logo {
+      width: 42px; height: 42px; border-radius: 13px; flex-shrink: 0;
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: white;
+      box-shadow: 0 0 22px rgba(59,130,246,.5), 0 0 50px rgba(59,130,246,.15);
+    }
+    .header-info { flex: 1; }
+    .header-info h1 {
+      font-size: 17px; font-weight: 800; letter-spacing: -.3px;
+      background: linear-gradient(90deg, #93c5fd, #3b82f6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .header-info p { font-size: 10.5px; color: var(--muted2); margin-top: 1px; }
+
+    .status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #4ade80; margin-right: 10px;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4ade80; box-shadow: 0 0 7px #4ade80;
+      animation: pulse 2s infinite;
+    }
+
+    /* Menu Button */
+    .menu-btn {
+      width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+      background: rgba(59,130,246,.09); border: 1px solid var(--border2);
+      color: var(--accent2); font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s; position: relative;
+    }
+    .menu-btn:hover { background: rgba(59,130,246,.18); }
+
+    .dropdown {
+      position: absolute; right: 0; top: 46px; z-index: 99;
+      background: #070f1e; border: 1px solid var(--border2);
+      border-radius: 14px; overflow: hidden; min-width: 200px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      display: none;
+    }
+    .dropdown.open { display: block; }
+    .dropdown button {
+      display: block; width: 100%; padding: 12px 18px;
+      background: transparent; border: none;
+      border-bottom: 1px solid rgba(59,130,246,.06);
+      color: var(--accent3); font-size: 13.5px; cursor: pointer;
+      text-align: left; font-family: 'Outfit', sans-serif;
+      transition: background .15s;
+    }
+    .dropdown button:hover { background: rgba(59,130,246,.09); }
+
+    /* ── Chat Area ── */
+    .chat-area {
+      flex: 1; overflow-y: auto; padding: 26px 20px;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── Welcome ── */
+    .welcome {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 20px 16px;
+      animation: fadeUp .5s ease;
+    }
+    .welcome-icon {
+      width: 82px; height: 82px; border-radius: 26px; margin-bottom: 22px;
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; font-weight: 900;
+      box-shadow: 0 0 50px rgba(59,130,246,.4), 0 0 100px rgba(59,130,246,.12);
+      animation: float 3.2s ease-in-out infinite;
+    }
+    .welcome h2 {
+      font-size: 30px; font-weight: 900; letter-spacing: -.6px; margin-bottom: 8px;
+      background: linear-gradient(135deg, #bfdbfe, #3b82f6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .welcome .by {
+      font-size: 12px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+    .welcome p { color: var(--muted2); font-size: 14.5px; max-width: 400px; line-height: 1.7; margin-bottom: 26px; }
+
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+    .badge {
+      padding: 5px 13px; border-radius: 100px;
+      background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2);
+      color: var(--accent2); font-size: 12px; font-weight: 500;
+    }
+
+    .suggestions { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; max-width: 580px; }
+    .chip {
+      padding: 9px 17px; border-radius: 100px;
+      border: 1px solid rgba(59,130,246,.14);
+      background: rgba(59,130,246,.05); color: #7baee8;
+      font-size: 13px; cursor: pointer; transition: all .2s;
+      font-family: 'Outfit', sans-serif;
+    }
+    .chip:hover {
+      border-color: var(--accent); background: rgba(59,130,246,.14);
+      color: var(--accent2); transform: translateY(-2px);
+    }
+
+    /* ── Messages ── */
+    .messages { display: flex; flex-direction: column; gap: 18px; max-width: 820px; width: 100%; margin: 0 auto; }
+
+    .msg { display: flex; gap: 10px; animation: fadeUp .28s ease; }
+    .msg.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800; margin-top: 2px;
+    }
+    .avatar.user-av {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      box-shadow: 0 2px 14px rgba(59,130,246,.38); color: white;
+    }
+    .avatar.ai-av {
+      background: var(--surface2); border: 1px solid var(--border2); color: white;
+    }
+
+    .bubble-wrap { max-width: 75%; display: flex; flex-direction: column; gap: 7px; }
+    .msg.user .bubble-wrap { align-items: flex-end; }
+
+    .bubble-img { max-width: 220px; max-height: 180px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border2); }
+
+    .bubble {
+      padding: 13px 17px; font-size: 14.5px; line-height: 1.7;
+      word-break: break-word; white-space: pre-wrap;
+    }
+    .bubble.user-bubble {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      border-radius: 18px 4px 18px 18px;
+      color: #e8f4ff;
+      box-shadow: 0 4px 22px rgba(59,130,246,.25);
+    }
+    .bubble.ai-bubble {
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+      border-radius: 4px 18px 18px 18px;
+      color: var(--text);
+    }
+    .bubble strong { color: #93c5fd; font-weight: 700; }
+    .bubble em     { color: #a5b4fc; }
+    .bubble code   {
+      background: rgba(59,130,246,.18); color: #93c5fd;
+      padding: 1px 6px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    }
+
+    /* Typing dots */
+    .typing { display: flex; gap: 5px; align-items: center; padding: 2px 0; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: .15s; }
+    .dot:nth-child(3) { animation-delay: .30s; }
+
+    /* ── Image Preview Bar ── */
+    .img-preview-bar {
+      margin: 0 18px; display: none;
+      background: rgba(59,130,246,.06); border: 1px solid rgba(59,130,246,.2);
+      border-radius: 12px 12px 0 0; padding: 10px 14px;
+      align-items: center; gap: 13px; position: relative; z-index: 5;
+    }
+    .img-preview-bar.show { display: flex; }
+    .img-preview-thumb { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(59,130,246,.3); }
+    .img-preview-bar .info { flex: 1; }
+    .img-preview-bar .info strong { color: var(--accent2); font-size: 13px; }
+    .img-preview-bar .info span { display: block; color: var(--muted); font-size: 12px; }
+    .remove-img {
+      background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.28);
+      color: #f87171; border-radius: 8px; width: 30px; height: 30px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+
+    /* ── Input ── */
+    .input-area {
+      padding: 0 18px 20px; background: rgba(3,8,15,.88);
+      backdrop-filter: blur(22px); flex-shrink: 0; position: relative; z-index: 5;
+    }
+    .input-box {
+      display: flex; gap: 9px; align-items: flex-end;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 15px; padding: 10px 10px 10px 17px;
+      max-width: 820px; margin: 0 auto;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input-box:focus-within {
+      border-color: rgba(59,130,246,.45);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.08);
+    }
+    .input-box.has-img { border-radius: 0 0 15px 15px; }
+
+    textarea {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14.5px;
+      line-height: 1.55; resize: none; min-height: 24px; max-height: 140px;
+      overflow-y: auto; padding: 0;
+    }
+    textarea::placeholder { color: var(--muted); }
+    textarea::-webkit-scrollbar { display: none; }
+
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0; transition: all .2s; border: none;
+    }
+    .upload-btn {
+      background: rgba(59,130,246,.09); border: 1px solid rgba(59,130,246,.22) !important;
+      color: var(--accent2);
+    }
+    .upload-btn:hover { background: rgba(59,130,246,.2); transform: scale(1.06); }
+
+    .send-btn {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: white; box-shadow: 0 2px 14px rgba(59,130,246,.38);
+    }
+    .send-btn:hover:not(:disabled) { transform: scale(1.06); box-shadow: 0 4px 22px rgba(59,130,246,.52); }
+    .send-btn:disabled { background: rgba(255,255,255,.05); color: #333; box-shadow: none; cursor: not-allowed; }
+
+    .input-footer {
+      text-align: center; margin-top: 8px; font-size: 11px;
+      color: #1a2d45; max-width: 820px; margin: 8px auto 0;
+    }
+
+    /* ── Drag Overlay ── */
+    .drag-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(59,130,246,.07); border: 3px dashed var(--accent);
+      border-radius: 20px; display: none;
+      align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 700; color: var(--accent2);
+      backdrop-filter: blur(5px);
+    }
+    .drag-overlay.show { display: flex; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #04091a; border: 1px solid rgba(59,130,246,.18);
+      border-radius: 22px; max-width: 640px; width: 100%; max-height: 82vh;
+      overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 28px 70px rgba(0,0,0,.65);
+    }
+    .modal-header {
+      padding: 18px 24px; border-bottom: 1px solid rgba(59,130,246,.08);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .modal-header span { font-weight: 700; font-size: 17px; color: var(--accent2); }
+    .modal-close {
+      background: rgba(255,255,255,.07); border: none; color: #888;
+      width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 16px;
+    }
+    .modal-body { padding: 22px 26px; overflow-y: auto; color: #8ca8cc; font-size: 14px; line-height: 1.85; }
+    .modal-body strong { color: var(--accent2); }
+    .modal-body h3 { color: var(--accent2); margin-bottom: 6px; }
+
+    /* Care card */
+    .wa-card {
+      background: rgba(37,211,102,.07); border: 1px solid rgba(37,211,102,.2);
+      border-radius: 14px; padding: 18px; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .wa-card .number { color: #86efac; font-size: 20px; font-weight: 800; }
+    .wa-btn {
+      margin-left: auto; padding: 10px 20px; border-radius: 100px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: white; text-decoration: none; font-size: 13px; font-weight: 700;
+      box-shadow: 0 4px 16px rgba(37,211,102,.3); white-space: nowrap; font-family: 'Outfit', sans-serif;
+    }
+
+    /* About feature cards */
+    .feat-card {
+      display: flex; gap: 13px; align-items: center;
+      background: rgba(59,130,246,.05); border: 1px solid rgba(59,130,246,.1);
+      border-radius: 11px; padding: 13px 15px; margin-bottom: 10px;
+    }
+    .feat-card .feat-icon { font-size: 22px; }
+    .feat-card .feat-title { color: var(--accent2); font-weight: 600; font-size: 14px; }
+    .feat-card .feat-desc  { color: var(--muted2); font-size: 12.5px; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(13px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.45} }
+    @keyframes bounce  { 0%,80%,100%{transform:scale(.65);opacity:.35} 40%{transform:scale(1);opacity:1} }
+  </style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- Drag Overlay -->
+<div class="drag-overlay" id="dragOverlay">📸 Image yahan drop karein</div>
+
+<!-- App -->
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">✦</div>
+    <div class="header-info">
+      <h1>Ai Nayra Vision</h1>
+      <p>by Ai Nayra Hub · Image AI &amp; Prompt Generator</p>
+    </div>
+    <div class="status">
+      <div class="status-dot"></div>
+      Online
+    </div>
+    <div style="position:relative">
+      <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
+      <div class="dropdown" id="dropdown">
+        <button onclick="openModal('privacy')">🔒 Privacy Policy</button>
+        <button onclick="openModal('terms')">📄 Terms &amp; Conditions</button>
+        <button onclick="openModal('care')">📞 Customer Care</button>
+        <button onclick="openModal('about')">ℹ️ About Us</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Chat -->
+  <div class="chat-area" id="chatArea">
+    <!-- Welcome -->
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">✦</div>
+      <h2>Ai Nayra Vision</h2>
+      <div class="by">by Ai Nayra Hub</div>
+      <p>Image upload karein aur detailed AI prompts generate karein 🎨<br>Ya koi bhi sawaal poochhein — Hindi / English dono mein!</p>
+      <div class="badges">
+        <span class="badge">📸 Image Analysis</span>
+        <span class="badge">✨ Prompt Generator</span>
+        <span class="badge">🌐 Hindi &amp; English</span>
+        <span class="badge">🤖 AI Powered</span>
+      </div>
+      <div class="suggestions">
+        <button class="chip" onclick="sendSuggestion(this)">🎨 Is image ka detailed prompt generate karo</button>
+        <button class="chip" onclick="sendSuggestion(this)">📸 Image mein kya hai describe karo</button>
+        <button class="chip" onclick="sendSuggestion(this)">✍️ Ek creative story idea do</button>
+        <button class="chip" onclick="sendSuggestion(this)">💡 Best AI image prompts ke tips do</button>
+        <button class="chip" onclick="sendSuggestion(this)">🌈 Cinematic image prompt likho sunset ke liye</button>
+        <button class="chip" onclick="sendSuggestion(this)">🤖 Realistic portrait prompt generate karo</button>
+      </div>
+    </div>
+    <!-- Messages container (hidden initially) -->
+    <div class="messages" id="messages" style="display:none"></div>
+  </div>
+
+  <!-- Image Preview Bar -->
+  <div class="img-preview-bar" id="imgPreviewBar">
+    <img class="img-preview-thumb" id="previewThumb" src="" alt="preview" />
+    <div class="info">
+      <strong>Image ready ✓</strong>
+      <span>Sawaal likhein ya seedha send karein for analysis</span>
+    </div>
+    <button class="remove-img" onclick="removeImage()">✕</button>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-box" id="inputBox">
+      <button class="icon-btn upload-btn" onclick="document.getElementById('fileInput').click()" title="Image upload karein">📸</button>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="onFileChange(event)" />
+      <textarea id="userInput" placeholder="Kuch bhi poochhein ya image upload karein… (Enter to send)" rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="icon-btn send-btn" id="sendBtn" onclick="sendMessage()" title="Send">➤</button>
+    </div>
+    <div class="input-footer">📸 Image drag &amp; drop ya button se upload karein · Ai Nayra Vision by Ai Nayra Hub</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+
+<!-- Privacy -->
+<div class="modal-overlay" id="modal-privacy" onclick="closeModalOutside(event,'privacy')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>🔒 Privacy Policy</span>
+      <button class="modal-close" onclick="closeModal('privacy')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Last Updated: April 2025</strong></p><br>
+      <p>Welcome to <strong>Ai Nayra Vision</strong> by <strong>Ai Nayra Hub</strong>. Humari privacy aapke liye bahut important hai.</p><br>
+      <p><strong>1. Data Collection</strong><br>Hum aapki personal information collect nahi karte. Jo images aap upload karte hain, wo sirf real-time analysis ke liye use hoti hain aur store nahi ki jaati.</p><br>
+      <p><strong>2. Image Data</strong><br>Upload ki gayi images temporarily process hoti hain aur turant delete ho jaati hain. Hum kisi bhi image ko apne servers par store nahi karte.</p><br>
+      <p><strong>3. Conversation Data</strong><br>Aapki conversations sirf aapke current session mein rehti hain. Browser band hone par sab automatically delete ho jata hai.</p><br>
+      <p><strong>4. Third-Party Services</strong><br>Hum Anthropic AI API use karte hain responses generate karne ke liye. Unki privacy policy bhi apply hoti hai.</p><br>
+      <p><strong>5. Cookies</strong><br>Hum koi cookies ya tracking technologies use nahi karte.</p><br>
+      <p><strong>6. Contact</strong><br>Privacy se related sawaalon ke liye WhatsApp karein: <strong style="color:#4ade80">+919559123316</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Terms -->
+<div class="modal-overlay" id="modal-terms" onclick="closeModalOutside(event,'terms')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>📄 Terms &amp; Conditions</span>
+      <button class="modal-close" onclick="closeModal('terms')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Effective Date: April 2025</strong></p><br>
+      <p>In terms ko accept karke aap <strong>Ai Nayra Vision</strong> use karne ke liye agree karte hain.</p><br>
+      <p><strong>1. Acceptable Use</strong><br>Aap is app ka use only legal aur ethical purposes ke liye kar sakte hain. Koi bhi harmful, illegal ya objectionable content generate nahi karein.</p><br>
+      <p><strong>2. Image Upload</strong><br>Sirf wahi images upload karein jiske aap owner hain ya jinhe use karne ka aapko permission hai. Copyright images upload karna prohibited hai.</p><br>
+      <p><strong>3. AI Generated Content</strong><br>AI dwara generate prompts aur responses informational hain. Ai Nayra Hub in responses ki accuracy ki guarantee nahi deta.</p><br>
+      <p><strong>4. Intellectual Property</strong><br>Ai Nayra Vision aur Ai Nayra Hub ke saare trademarks, logos aur content humari property hain.</p><br>
+      <p><strong>5. Limitation of Liability</strong><br>Ai Nayra Hub kisi bhi direct ya indirect damages ke liye liable nahi hai jo is app ke use se ho.</p><br>
+      <p><strong>6. Changes</strong><br>Hum in terms ko kabhi bhi update kar sakte hain. Continued use means acceptance.</p><br>
+      <p><strong>7. Contact</strong><br>Sawaalon ke liye WhatsApp: <strong style="color:#4ade80">+919559123316</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Care -->
+<div class="modal-overlay" id="modal-care" onclick="closeModalOutside(event,'care')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>📞 Customer Care</span>
+      <button class="modal-close" onclick="closeModal('care')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:22px">
+        <div style="font-size:46px;margin-bottom:10px">🤝</div>
+        <h3 style="color:#60a5fa;font-size:20px">Hum Yahan Hain Aapke Liye!</h3>
+        <p style="color:#4a6080;margin-top:6px">24/7 support available hai</p>
+      </div>
+      <div class="wa-card">
+        <div style="font-size:30px">💬</div>
+        <div>
+          <div style="color:#4ade80;font-weight:700;font-size:15px;margin-bottom:4px">WhatsApp Support</div>
+          <div class="number">+919559123316</div>
+          <div style="color:#4a6080;font-size:12px;margin-top:4px">Response time: 30 minutes ke andar</div>
+        </div>
+        <a href="https://wa.me/919559123316" target="_blank" class="wa-btn">Chat Now →</a>
+      </div>
+      <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:12px;padding:16px">
+        <div style="color:#60a5fa;font-weight:600;margin-bottom:10px">📋 Support Topics</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Image analysis kaam nahi kar raha</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Prompt quality se related sawaal</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Technical issues</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Feature suggestions</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0">✓ General queries</div>
+      </div>
+      <p style="margin-top:16px;color:#4a6080;font-size:13px;text-align:center">Company: <strong style="color:#60a5fa">Ai Nayra Hub</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- About -->
+<div class="modal-overlay" id="modal-about" onclick="closeModalOutside(event,'about')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>ℹ️ About Us</span>
+      <button class="modal-close" onclick="closeModal('about')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="width:70px;height:70px;border-radius:20px;margin:0 auto 14px;background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 0 30px rgba(59,130,246,.35)">✦</div>
+        <h2 style="color:#93c5fd;font-size:22px;font-weight:800">Ai Nayra Vision</h2>
+        <p style="color:#3b82f6;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:5px">by Ai Nayra Hub</p>
+      </div>
+      <p><strong>Ai Nayra Hub</strong> ek innovative AI technology company hai jo cutting-edge AI tools develop karta hai — sab ke liye accessible aur useful.</p><br>
+      <p><strong>Ai Nayra Vision</strong> hamara flagship product hai — ek powerful AI assistant jo:</p><br>
+      <div class="feat-card"><span class="feat-icon">📸</span><div><div class="feat-title">Image Analysis</div><div class="feat-desc">Kisi bhi image ko deeply analyse karta hai</div></div></div>
+      <div class="feat-card"><span class="feat-icon">✨</span><div><div class="feat-title">Prompt Generation</div><div class="feat-desc">Professional AI image prompts generate karta hai (Midjourney, DALL-E, SD)</div></div></div>
+      <div class="feat-card"><span class="feat-icon">🌐</span><div><div class="feat-title">Bilingual Support</div><div class="feat-desc">Hindi aur English dono mein kaam karta hai</div></div></div>
+      <div class="feat-card"><span class="feat-icon">🤖</span><div><div class="feat-title">Advanced AI</div><div class="feat-desc">Latest Claude AI technology se powered</div></div></div>
+      <br>
+      <p style="color:#2a4060;font-size:13px;text-align:center">Version 1.0 · © 2025 Ai Nayra Hub · All Rights Reserved</p>
+      <p style="color:#2a4060;font-size:13px;text-align:center;margin-top:6px">Contact: <strong style="color:#4ade80">+919559123316</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCRIPT ═══════════════════ -->
+<script>
+  const API_URL = "https://api.anthropic.com/v1/messages";
+  let conversationHistory = [];
+  let isLoading = false;
+  let currentImage = null; // { base64, preview, mime }
+
+  /* ── Menu ── */
+  function toggleMenu() {
+    document.getElementById('dropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#menuBtn') && !e.target.closest('#dropdown'))
+      document.getElementById('dropdown').classList.remove('open');
+  });
+
+  /* ── Modals ── */
+  function openModal(name) {
+    document.getElementById('modal-' + name).classList.add('open');
+    document.getElementById('dropdown').classList.remove('open');
+  }
+  function closeModal(name) {
+    document.getElementById('modal-' + name).classList.remove('open');
+  }
+  function closeModalOutside(e, name) {
+    if (e.target === document.getElementById('modal-' + name)) closeModal(name);
+  }
+
+  /* ── Image Handling ── */
+  function toBase64(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = () => rej(new Error('Read failed'));
+      r.readAsDataURL(file);
+    });
+  }
+  async function pickImage(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const base64 = await toBase64(file);
+    const preview = URL.createObjectURL(file);
+    currentImage = { base64, preview, mime: file.type };
+    document.getElementById('previewThumb').src = preview;
+    document.getElementById('imgPreviewBar').classList.add('show');
+    document.getElementById('inputBox').classList.add('has-img');
+    document.getElementById('userInput').placeholder = 'Image ke baare mein poochhein ya prompt generate karein…';
+  }
+  function onFileChange(e) { if (e.target.files[0]) pickImage(e.target.files[0]); }
+  function removeImage() {
+    currentImage = null;
+    document.getElementById('imgPreviewBar').classList.remove('show');
+    document.getElementById('inputBox').classList.remove('has-img');
+    document.getElementById('previewThumb').src = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('userInput').placeholder = 'Kuch bhi poochhein ya image upload karein… (Enter to send)';
+  }
+
+  /* ── Drag & Drop ── */
+  document.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('dragOverlay').classList.add('show'); });
+  document.addEventListener('dragleave', e => { if (!e.relatedTarget) document.getElementById('dragOverlay').classList.remove('show'); });
+  document.addEventListener('drop', async e => {
+    e.preventDefault();
+    document.getElementById('dragOverlay').classList.remove('show');
+    const file = e.dataTransfer.files[0];
+    if (file) await pickImage(file);
+  });
+
+  /* ── Textarea ── */
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+  }
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+  function sendSuggestion(btn) {
+    document.getElementById('userInput').value = btn.textContent.replace(/^[^\w\u0900-\u097F]+/, '').trim();
+    sendMessage();
+  }
+
+  /* ── Format text ── */
+  function formatText(text) {
+    return text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g,'<em>$1</em>')
+      .replace(/`([^`]+)`/g,'<code>$1</code>')
+      .replace(/\n/g,'<br>');
+  }
+
+  /* ── Show / Hide welcome ── */
+  function showMessages() {
+    const w = document.getElementById('welcome');
+    const m = document.getElementById('messages');
+    if (w) w.style.display = 'none';
+    m.style.display = 'flex';
+  }
+
+  /* ── Add message bubble ── */
+  function addBubble(role, content, imagePreview, typing) {
+    showMessages();
+    const container = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+    if (typing) div.id = 'typingBubble';
+
+    const avEl = document.createElement('div');
+    avEl.className = 'avatar ' + (role === 'user' ? 'user-av' : 'ai-av');
+    avEl.textContent = role === 'user' ? '👤' : '✦';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'bubble-wrap';
+
+    if (imagePreview) {
+      const img = document.createElement('img');
+      img.className = 'bubble-img';
+      img.src = imagePreview;
+      img.alt = 'uploaded';
+      wrap.appendChild(img);
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble ' + (role === 'user' ? 'user-bubble' : 'ai-bubble');
+
+    if (typing) {
+      bubble.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+    } else {
+      bubble.innerHTML = formatText(content);
+    }
+
+    wrap.appendChild(bubble);
+    div.appendChild(avEl);
+    div.appendChild(wrap);
+    container.appendChild(div);
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    return div;
+  }
+
+  function removeTyping() {
+    const el = document.getElementById('typingBubble');
+    if (el) el.remove();
+  }
+
+  /* ── Send ── */
+  async function sendMessage(overrideText) {
+    const inputEl = document.getElementById('userInput');
+    const text = (overrideText || inputEl.value).trim();
+    if ((!text && !currentImage) || isLoading) return;
+
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    isLoading = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    const userText = text || 'Is image ko analyse karo aur detailed image prompt generate karo.';
+    const imagePreview = currentImage?.preview || null;
+    const sentImage = currentImage ? { ...currentImage } : null;
+    removeImage();
+
+    addBubble('user', userText, imagePreview);
+    conversationHistory.push({ role: 'user', content: userText });
+    addBubble('ai', '', null, true);
+
+    // Build API messages
+    const apiMessages = conversationHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
+    const userContent = [];
+    if (sentImage) {
+      userContent.push({ type: 'image', source: { type: 'base64', media_type: sentImage.mime, data: sentImage.base64 } });
+    }
+    userContent.push({ type: 'text', text: userText });
+    apiMessages.push({ role: 'user', content: userContent });
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `Tum ho "Ai Nayra Vision" — Ai Nayra Hub ka advanced AI assistant jiska mukhya kaam hai:
+1. Images ko deeply analyse karna
+2. Detailed, creative AI image generation prompts banana (Midjourney, DALL-E, Stable Diffusion ke liye)
+3. Har tarah ke sawaalon ke jawab dena — Hindi, English, Hinglish mein
+
+Jab image di jaye:
+- Pehle image ka full analysis karo (subjects, colors, mood, style, lighting)
+- Phir ek professional image generation prompt generate karo with main subject, style, lighting, mood, camera settings
+- Format: **🔍 Image Analysis:** [analysis]\n\n**✨ Generated Prompt:** [detailed prompt]\n\n**📋 Short Prompt:** [concise version]
+
+Bina image ke bhi creative prompts aur sawaalon ke jawab do. Always helpful, creative aur professional raho.
+Company: Ai Nayra Hub | App: Ai Nayra Vision`,
+          messages: apiMessages,
+        }),
+      });
+      const data = await res.json();
+      const reply = data.content?.[0]?.text || 'Koi jawab nahi mila. Dobara try karein.';
+      removeTyping();
+      conversationHistory.push({ role: 'assistant', content: reply });
+      addBubble('ai', reply);
+    } catch (err) {
+      removeTyping();
+      addBubble('ai', '⚠️ Error aaya. Please dobara try karein.');
+    }
+
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    inputEl.focus();
+  }
+</script>
+</body>
+</html>
