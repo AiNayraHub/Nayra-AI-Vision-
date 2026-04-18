@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ai Nayra Vision – by Ai Nayra Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #03080f;
+      --surface:  #0a1628;
+      --surface2: #0d1d35;
+      --border:   rgba(59,130,246,0.12);
+      --border2:  rgba(99,179,237,0.18);
+      --accent:   #3b82f6;
+      --accent2:  #60a5fa;
+      --accent3:  #93c5fd;
+      --text:     #e8f1ff;
+      --muted:    #4a6080;
+      --muted2:   #6b8aaa;
+    }
+
+    html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'Outfit',sans-serif; }
+
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(59,130,246,.18); border-radius:4px; }
+
+    /* BG */
+    .bg-orbs { position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .orb { position:absolute; border-radius:50%; }
+    .orb1 { top:-10%;left:-8%;width:55%;height:55%;background:radial-gradient(circle,rgba(37,99,235,.13) 0%,transparent 70%); }
+    .orb2 { bottom:-12%;right:-6%;width:48%;height:48%;background:radial-gradient(circle,rgba(59,130,246,.09) 0%,transparent 70%); }
+    .orb3 { top:38%;right:16%;width:32%;height:32%;background:radial-gradient(circle,rgba(147,197,253,.05) 0%,transparent 70%); }
+
+    /* Shell */
+    .app { position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;max-width:900px;margin:0 auto; }
+
+    /* Header */
+    header {
+      display:flex;align-items:center;gap:13px;padding:0 22px;height:64px;flex-shrink:0;
+      background:rgba(3,8,15,.9);backdrop-filter:blur(22px);border-bottom:1px solid var(--border);
+      position:relative;z-index:20;
+    }
+    .logo {
+      width:42px;height:42px;border-radius:13px;flex-shrink:0;
+      background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
+      display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:white;
+      box-shadow:0 0 22px rgba(59,130,246,.5),0 0 50px rgba(59,130,246,.15);
+    }
+    .hinfo { flex:1; }
+    .hinfo h1 { font-size:17px;font-weight:800;letter-spacing:-.3px;background:linear-gradient(90deg,#93c5fd,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+    .hinfo p  { font-size:10.5px;color:var(--muted2);margin-top:1px; }
+
+    .status { display:flex;align-items:center;gap:6px;font-size:12px;color:#4ade80;margin-right:10px; }
+    .sdot   { width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 7px #4ade80;animation:pulse 2s infinite; }
+
+    .mwrap { position:relative; }
+    .mbtn  { width:38px;height:38px;border-radius:10px;cursor:pointer;background:rgba(59,130,246,.09);border:1px solid var(--border2);color:var(--accent2);font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+    .mbtn:hover { background:rgba(59,130,246,.2); }
+    .ddrop { position:absolute;right:0;top:46px;z-index:99;background:#070f1e;border:1px solid var(--border2);border-radius:14px;overflow:hidden;min-width:205px;box-shadow:0 18px 50px rgba(0,0,0,.6);display:none; }
+    .ddrop.open { display:block; }
+    .ddrop button { display:block;width:100%;padding:12px 18px;background:transparent;border:none;border-bottom:1px solid rgba(59,130,246,.06);color:var(--accent3);font-size:13.5px;cursor:pointer;text-align:left;font-family:'Outfit',sans-serif;transition:background .15s; }
+    .ddrop button:hover { background:rgba(59,130,246,.1); }
+
+    /* Chat */
+    .chat-area { flex:1;overflow-y:auto;padding:26px 20px;position:relative;z-index:1;display:flex;flex-direction:column; }
+
+    /* Welcome */
+    .welcome { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 16px;animation:fadeUp .5s ease; }
+    .wicon  { width:82px;height:82px;border-radius:26px;margin-bottom:22px;background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;box-shadow:0 0 50px rgba(59,130,246,.4),0 0 100px rgba(59,130,246,.12);animation:float 3.2s ease-in-out infinite; }
+    .welcome h2 { font-size:30px;font-weight:900;letter-spacing:-.6px;margin-bottom:8px;background:linear-gradient(135deg,#bfdbfe,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+    .wby        { font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px; }
+    .welcome p  { color:var(--muted2);font-size:14.5px;max-width:400px;line-height:1.7;margin-bottom:26px; }
+    .badges { display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px; }
+    .badge  { padding:5px 13px;border-radius:100px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:var(--accent2);font-size:12px;font-weight:500; }
+    .suggestions { display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:580px; }
+    .chip { padding:9px 17px;border-radius:100px;border:1px solid rgba(59,130,246,.14);background:rgba(59,130,246,.05);color:#7baee8;font-size:13px;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif; }
+    .chip:hover { border-color:var(--accent);background:rgba(59,130,246,.15);color:var(--accent2);transform:translateY(-2px); }
+
+    /* Messages */
+    .messages { display:flex;flex-direction:column;gap:18px;max-width:820px;width:100%;margin:0 auto; }
+    .msg      { display:flex;gap:10px;animation:fadeUpS .28s ease; }
+    .msg.user { flex-direction:row-reverse; }
+    .av { width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;margin-top:2px; }
+    .av.uav { background:linear-gradient(135deg,#1d4ed8,#3b82f6);box-shadow:0 2px 14px rgba(59,130,246,.38);color:white; }
+    .av.aav { background:var(--surface2);border:1px solid var(--border2);color:white; }
+    .bwrap { max-width:75%;display:flex;flex-direction:column;gap:7px; }
+    .msg.user .bwrap { align-items:flex-end; }
+    .bimg { max-width:220px;max-height:180px;border-radius:12px;object-fit:cover;border:1px solid var(--border2); }
+    .bubble { padding:13px 17px;font-size:14.5px;line-height:1.7;word-break:break-word;white-space:pre-wrap; }
+    .ub { background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:18px 4px 18px 18px;color:#e8f4ff;box-shadow:0 4px 22px rgba(59,130,246,.25); }
+    .ab { background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:4px 18px 18px 18px;color:var(--text); }
+    .bubble strong { color:#93c5fd;font-weight:700; }
+    .bubble em { color:#a5b4fc; }
+    .bubble code { background:rgba(59,130,246,.18);color:#93c5fd;padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px; }
+    .typing { display:flex;gap:5px;align-items:center;padding:2px 0; }
+    .dot { width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#60a5fa);animation:bounce 1.2s infinite ease-in-out; }
+    .dot:nth-child(2){animation-delay:.15s;} .dot:nth-child(3){animation-delay:.30s;}
+
+    /* Preview bar */
+    .prev-bar { margin:0 18px;display:none;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px 12px 0 0;padding:10px 14px;align-items:center;gap:13px;position:relative;z-index:5; }
+    .prev-bar.show { display:flex; }
+    .pthumb { width:52px;height:52px;border-radius:8px;object-fit:cover;border:1px solid rgba(59,130,246,.3); }
+    .pinfo  { flex:1; }
+    .pinfo strong { color:var(--accent2);font-size:13px;display:block; }
+    .pinfo span   { color:var(--muted);font-size:12px; }
+    .rmbtn { background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.28);color:#f87171;border-radius:8px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px; }
+
+    /* Input */
+    .input-area { padding:0 18px 20px;background:rgba(3,8,15,.9);backdrop-filter:blur(22px);flex-shrink:0;position:relative;z-index:5; }
+    .ibox { display:flex;gap:9px;align-items:flex-end;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:10px 10px 10px 17px;max-width:820px;margin:0 auto;transition:border-color .2s,box-shadow .2s; }
+    .ibox:focus-within { border-color:rgba(59,130,246,.45);box-shadow:0 0 0 3px rgba(59,130,246,.08); }
+    .ibox.hi { border-radius:0 0 15px 15px; }
+    textarea { flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:14.5px;line-height:1.55;resize:none;min-height:24px;max-height:140px;overflow-y:auto;padding:0; }
+    textarea::placeholder { color:var(--muted); }
+    textarea::-webkit-scrollbar { display:none; }
+    .ibtn { width:38px;height:38px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all .2s;border:none;font-family:inherit; }
+    .upbtn { background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.22)!important;color:var(--accent2); }
+    .upbtn:hover { background:rgba(59,130,246,.22);transform:scale(1.06); }
+    .sndbtn { background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;box-shadow:0 2px 14px rgba(59,130,246,.38); }
+    .sndbtn:hover:not(:disabled) { transform:scale(1.06);box-shadow:0 4px 22px rgba(59,130,246,.52); }
+    .sndbtn:disabled { background:rgba(255,255,255,.05);color:#333;box-shadow:none;cursor:not-allowed; }
+    .ifooter { text-align:center;margin:8px auto 0;font-size:11px;color:#1a2d45;max-width:820px; }
+
+    /* Drag overlay */
+    .drag-ov { position:fixed;inset:0;z-index:50;background:rgba(59,130,246,.07);border:3px dashed var(--accent);border-radius:20px;display:none;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--accent2);backdrop-filter:blur(5px); }
+    .drag-ov.show { display:flex; }
+
+    /* Modal */
+    .mov { position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px; }
+    .mov.open { display:flex; }
+    .mbox { background:#04091a;border:1px solid rgba(59,130,246,.18);border-radius:22px;max-width:640px;width:100%;max-height:82vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 28px 70px rgba(0,0,0,.65); }
+    .mhdr { padding:18px 24px;border-bottom:1px solid rgba(59,130,246,.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0; }
+    .mhdr span { font-weight:700;font-size:17px;color:var(--accent2); }
+    .mclose { background:rgba(255,255,255,.07);border:none;color:#888;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px; }
+    .mbody { padding:22px 26px;overflow-y:auto;color:#8ca8cc;font-size:14px;line-height:1.85; }
+    .mbody strong { color:var(--accent2); }
+
+    .wacard { background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.2);border-radius:14px;padding:18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap; }
+    .wabtn { margin-left:auto;padding:10px 20px;border-radius:100px;background:linear-gradient(135deg,#25d366,#128c7e);color:white;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(37,211,102,.3);white-space:nowrap;font-family:'Outfit',sans-serif; }
+    .fcard { display:flex;gap:13px;align-items:center;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.1);border-radius:11px;padding:13px 15px;margin-bottom:10px; }
+    .ftit { color:var(--accent2);font-weight:600;font-size:14px; }
+    .fdsc { color:var(--muted2);font-size:12.5px; }
+
+    /* Toast */
+    .toast { position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:10px 22px;border-radius:100px;font-size:13px;z-index:200;display:none;backdrop-filter:blur(10px);white-space:nowrap; }
+    .toast.show { display:block; }
+
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUpS  { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes float    { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+    @keyframes pulse    { 0%,100%{opacity:1}50%{opacity:.45} }
+    @keyframes bounce   { 0%,80%,100%{transform:scale(.65);opacity:.35}40%{transform:scale(1);opacity:1} }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<div class="drag-ov" id="dragOv">📸 Image yahan drop karein</div>
+<div class="toast"  id="toast"></div>
+
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">✦</div>
+    <div class="hinfo">
+      <h1>Ai Nayra Vision</h1>
+      <p>by Ai Nayra Hub · Image AI &amp; Prompt Generator</p>
+    </div>
+    <div class="status"><div class="sdot"></div>Online</div>
+    <div class="mwrap">
+      <button class="mbtn" id="menuBtn" onclick="toggleMenu()">☰</button>
+      <div class="ddrop" id="ddrop">
+        <button onclick="openM('privacy')">🔒 Privacy Policy</button>
+        <button onclick="openM('terms')">📄 Terms &amp; Conditions</button>
+        <button onclick="openM('care')">📞 Customer Care</button>
+        <button onclick="openM('about')">ℹ️ About Us</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Chat -->
+  <div class="chat-area" id="chatArea">
+    <div class="welcome" id="welcome">
+      <div class="wicon">✦</div>
+      <h2>Ai Nayra Vision</h2>
+      <div class="wby">by Ai Nayra Hub</div>
+      <p>Image upload karein aur detailed AI prompts generate karein 🎨<br>Ya koi bhi sawaal poochhein — Hindi / English dono mein!</p>
+      <div class="badges">
+        <span class="badge">📸 Image Analysis</span>
+        <span class="badge">✨ Prompt Generator</span>
+        <span class="badge">🌐 Hindi &amp; English</span>
+        <span class="badge">🤖 AI Powered</span>
+      </div>
+      <div class="suggestions">
+        <button class="chip" onclick="useChip(this)">🎨 Is image ka detailed prompt generate karo</button>
+        <button class="chip" onclick="useChip(this)">📸 Image mein kya hai describe karo</button>
+        <button class="chip" onclick="useChip(this)">✍️ Ek creative story idea do</button>
+        <button class="chip" onclick="useChip(this)">💡 Best AI image prompts ke tips do</button>
+        <button class="chip" onclick="useChip(this)">🌈 Cinematic sunset image prompt likho</button>
+        <button class="chip" onclick="useChip(this)">🤖 Realistic portrait prompt generate karo</button>
+      </div>
+    </div>
+    <div class="messages" id="msgs" style="display:none"></div>
+  </div>
+
+  <!-- Preview bar -->
+  <div class="prev-bar" id="prevBar">
+    <img class="pthumb" id="pthumb" src="" alt="preview"/>
+    <div class="pinfo"><strong>✅ Image ready</strong><span>Sawaal likhein ya seedha send karein</span></div>
+    <button class="rmbtn" onclick="rmImage()">✕</button>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="ibox" id="ibox">
+      <button class="ibtn upbtn" onclick="document.getElementById('fInput').click()" title="Image upload">📸</button>
+      <input type="file" id="fInput" accept="image/*" style="display:none" onchange="onFile(event)"/>
+      <textarea id="txtIn" rows="1"
+        placeholder="Kuch bhi poochhein ya image upload karein… (Enter to send)"
+        onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+      <button class="ibtn sndbtn" id="sndBtn" onclick="send()" title="Send">➤</button>
+    </div>
+    <div class="ifooter">📸 Image drag &amp; drop ya button se upload karein · Ai Nayra Vision by Ai Nayra Hub</div>
+  </div>
+</div>
+
+<!-- ── MODALS ─────────────────────────────────────────────────────────── -->
+
+<!-- Privacy -->
+<div class="mov" id="mov-privacy" onclick="outsideClose(event,'privacy')">
+  <div class="mbox">
+    <div class="mhdr"><span>🔒 Privacy Policy</span><button class="mclose" onclick="closeM('privacy')">✕</button></div>
+    <div class="mbody">
+      <p><strong>Last Updated: April 2025</strong></p><br>
+      <p>Welcome to <strong>Ai Nayra Vision</strong> by <strong>Ai Nayra Hub</strong>. Humari privacy aapke liye bahut important hai.</p><br>
+      <p><strong>1. Data Collection</strong><br>Hum aapki personal information collect nahi karte. Jo images aap upload karte hain, wo sirf real-time analysis ke liye use hoti hain aur store nahi ki jaati.</p><br>
+      <p><strong>2. Image Data</strong><br>Upload ki gayi images temporarily process hoti hain aur turant delete ho jaati hain. Hum kisi bhi image ko apne servers par store nahi karte.</p><br>
+      <p><strong>3. Conversation Data</strong><br>Aapki conversations sirf aapke current session mein rehti hain. Browser band hone par sab automatically delete ho jata hai.</p><br>
+      <p><strong>4. Third-Party Services</strong><br>Hum Google Gemini AI API use karte hain responses generate karne ke liye. Google ki privacy policy bhi apply hoti hai.</p><br>
+      <p><strong>5. Cookies</strong><br>Hum koi cookies ya tracking technologies use nahi karte.</p><br>
+      <p><strong>6. Contact</strong><br>Privacy se related sawaalon ke liye WhatsApp karein: <strong style="color:#4ade80">+919559123316</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Terms -->
+<div class="mov" id="mov-terms" onclick="outsideClose(event,'terms')">
+  <div class="mbox">
+    <div class="mhdr"><span>📄 Terms &amp; Conditions</span><button class="mclose" onclick="closeM('terms')">✕</button></div>
+    <div class="mbody">
+      <p><strong>Effective Date: April 2025</strong></p><br>
+      <p>In terms ko accept karke aap <strong>Ai Nayra Vision</strong> use karne ke liye agree karte hain.</p><br>
+      <p><strong>1. Acceptable Use</strong><br>Aap is app ka use only legal aur ethical purposes ke liye kar sakte hain. Koi bhi harmful ya illegal content generate nahi karein.</p><br>
+      <p><strong>2. Image Upload</strong><br>Sirf wahi images upload karein jiske aap owner hain ya jinhe use karne ka permission hai. Copyright images upload karna prohibited hai.</p><br>
+      <p><strong>3. AI Generated Content</strong><br>AI dwara generate prompts aur responses informational hain. Ai Nayra Hub accuracy ki guarantee nahi deta.</p><br>
+      <p><strong>4. Intellectual Property</strong><br>Ai Nayra Vision aur Ai Nayra Hub ke saare trademarks aur content humari property hain.</p><br>
+      <p><strong>5. Limitation of Liability</strong><br>Ai Nayra Hub kisi bhi damages ke liye liable nahi hai jo is app ke use se ho.</p><br>
+      <p><strong>6. Changes</strong><br>Hum in terms ko kabhi bhi update kar sakte hain. Continued use means acceptance.</p><br>
+      <p><strong>7. Contact</strong><br>WhatsApp: <strong style="color:#4ade80">+919559123316</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Care -->
+<div class="mov" id="mov-care" onclick="outsideClose(event,'care')">
+  <div class="mbox">
+    <div class="mhdr"><span>📞 Customer Care</span><button class="mclose" onclick="closeM('care')">✕</button></div>
+    <div class="mbody">
+      <div style="text-align:center;margin-bottom:22px">
+        <div style="font-size:46px;margin-bottom:10px">🤝</div>
+        <h3 style="color:#60a5fa;font-size:20px;font-weight:700">Hum Yahan Hain Aapke Liye!</h3>
+        <p style="color:#4a6080;margin-top:6px">24/7 support available hai</p>
+      </div>
+      <div class="wacard">
+        <div style="font-size:30px">💬</div>
+        <div>
+          <div style="color:#4ade80;font-weight:700;font-size:15px;margin-bottom:4px">WhatsApp Support</div>
+          <div style="color:#86efac;font-size:20px;font-weight:800">+919559123316</div>
+          <div style="color:#4a6080;font-size:12px;margin-top:4px">Response time: 30 minutes ke andar</div>
+        </div>
+        <a href="https://wa.me/919559123316" target="_blank" class="wabtn">Chat Now →</a>
+      </div>
+      <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:12px;padding:16px">
+        <div style="color:#60a5fa;font-weight:600;margin-bottom:10px">📋 Support Topics</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Image analysis kaam nahi kar raha</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Prompt quality se related sawaal</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Technical issues</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.07)">✓ Feature suggestions</div>
+        <div style="color:#7baee8;font-size:13px;padding:5px 0">✓ General queries</div>
+      </div>
+      <p style="margin-top:16px;color:#4a6080;font-size:13px;text-align:center">Company: <strong style="color:#60a5fa">Ai Nayra Hub</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- About -->
+<div class="mov" id="mov-about" onclick="outsideClose(event,'about')">
+  <div class="mbox">
+    <div class="mhdr"><span>ℹ️ About Us</span><button class="mclose" onclick="closeM('about')">✕</button></div>
+    <div class="mbody">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="width:70px;height:70px;border-radius:20px;margin:0 auto 14px;background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 0 30px rgba(59,130,246,.35)">✦</div>
+        <h2 style="color:#93c5fd;font-size:22px;font-weight:800">Ai Nayra Vision</h2>
+        <p style="color:#3b82f6;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:5px">by Ai Nayra Hub</p>
+      </div>
+      <p><strong>Ai Nayra Hub</strong> ek innovative AI technology company hai jo cutting-edge AI tools develop karta hai — sab ke liye accessible aur useful.</p><br>
+      <div class="fcard"><span style="font-size:22px">📸</span><div><div class="ftit">Image Analysis</div><div class="fdsc">Kisi bhi image ko deeply analyse karta hai</div></div></div>
+      <div class="fcard"><span style="font-size:22px">✨</span><div><div class="ftit">Prompt Generation</div><div class="fdsc">Midjourney, DALL-E, Stable Diffusion ke liye prompts</div></div></div>
+      <div class="fcard"><span style="font-size:22px">🌐</span><div><div class="ftit">Bilingual Support</div><div class="fdsc">Hindi aur English dono mein kaam karta hai</div></div></div>
+      <div class="fcard"><span style="font-size:22px">🤖</span><div><div class="ftit">Advanced AI</div><div class="fdsc">Google Gemini AI technology se powered</div></div></div>
+      <br>
+      <p style="color:#2a4060;font-size:13px;text-align:center">Version 1.0 · © 2025 Ai Nayra Hub · All Rights Reserved</p>
+      <p style="color:#2a4060;font-size:13px;text-align:center;margin-top:6px">Contact: <strong style="color:#4ade80">+919559123316</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCRIPT ──────────────────────────────────────────────────────────── -->
+<script>
+const GEMINI_KEY = "AIzaSyC9ahq7JDj-h15MBikCHsP3AE5lOP7kORE";
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_KEY;
+
+const SYS = `Tum ho "Ai Nayra Vision" — Ai Nayra Hub ka advanced AI assistant.
+Tumhara mukhya kaam:
+1. Images ko deeply analyse karna
+2. Detailed creative AI image prompts banana (Midjourney, DALL-E, Stable Diffusion ke liye)
+3. Har tarah ke sawaalon ke jawab dena — Hindi, English, Hinglish mein
+
+Jab image di jaye use this format:
+**🔍 Image Analysis:** [subjects, colors, mood, style, lighting ka full analysis]
+
+**✨ Generated Prompt:** [detailed professional prompt — style, lighting, mood, camera settings ke saath]
+
+**📋 Short Prompt:** [concise 1-line version]
+
+Jo bhi language user use kare usi mein jawab do. Always helpful, creative, professional raho.`;
+
+let history  = [];
+let loading  = false;
+let curImg   = null; // {base64, preview, mime}
+
+// Menu
+function toggleMenu(){ document.getElementById('ddrop').classList.toggle('open'); }
+document.addEventListener('click', e=>{
+  if(!e.target.closest('#menuBtn')&&!e.target.closest('#ddrop'))
+    document.getElementById('ddrop').classList.remove('open');
+});
+
+// Modals
+function openM(n)  { document.getElementById('mov-'+n).classList.add('open'); document.getElementById('ddrop').classList.remove('open'); }
+function closeM(n) { document.getElementById('mov-'+n).classList.remove('open'); }
+function outsideClose(e,n){ if(e.target===document.getElementById('mov-'+n)) closeM(n); }
+
+// Toast
+function toast(msg, dur=3500){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+// Image
+function toB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); }); }
+
+async function pickImg(file){
+  if(!file||!file.type.startsWith('image/')){ toast('⚠️ Sirf image files allowed hain'); return; }
+  if(file.size>20*1024*1024){ toast('⚠️ Image 20MB se chhoti honi chahiye'); return; }
+  const b64=await toB64(file);
+  const prev=URL.createObjectURL(file);
+  curImg={base64:b64, preview:prev, mime:file.type};
+  document.getElementById('pthumb').src=prev;
+  document.getElementById('prevBar').classList.add('show');
+  document.getElementById('ibox').classList.add('hi');
+  document.getElementById('txtIn').placeholder='Image ke baare mein poochhein ya seedha send karein…';
+}
+function onFile(e){ if(e.target.files[0]) pickImg(e.target.files[0]); }
+function rmImage(){
+  curImg=null;
+  document.getElementById('prevBar').classList.remove('show');
+  document.getElementById('ibox').classList.remove('hi');
+  document.getElementById('pthumb').src='';
+  document.getElementById('fInput').value='';
+  document.getElementById('txtIn').placeholder='Kuch bhi poochhein ya image upload karein… (Enter to send)';
+}
+
+// Drag & Drop
+document.addEventListener('dragover', e=>{ e.preventDefault(); document.getElementById('dragOv').classList.add('show'); });
+document.addEventListener('dragleave',e=>{ if(!e.relatedTarget) document.getElementById('dragOv').classList.remove('show'); });
+document.addEventListener('drop', async e=>{ e.preventDefault(); document.getElementById('dragOv').classList.remove('show'); if(e.dataTransfer.files[0]) await pickImg(e.dataTransfer.files[0]); });
+
+// Textarea
+function resize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,140)+'px'; }
+function onKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } }
+function useChip(btn){ document.getElementById('txtIn').value=btn.textContent.replace(/^[^\w\u0900-\u097F]+/,'').trim(); send(); }
+
+// Format
+function fmt(text){
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\n/g,'<br>');
+}
+
+// Show msg area
+function showMsgs(){
+  const w=document.getElementById('welcome'), m=document.getElementById('msgs');
+  if(w) w.style.display='none'; m.style.display='flex';
+}
+
+// Add bubble
+function addBubble(role, content, imgPrev, isTyping){
+  showMsgs();
+  const c=document.getElementById('msgs');
+  const wrap=document.createElement('div');
+  wrap.className='msg '+(role==='user'?'user':'ai');
+  if(isTyping) wrap.id='tybubble';
+
+  const av=document.createElement('div');
+  av.className='av '+(role==='user'?'uav':'aav');
+  av.textContent=role==='user'?'👤':'✦';
+
+  const bw=document.createElement('div');
+  bw.className='bwrap';
+  if(role==='user') bw.style.alignItems='flex-end';
+
+  if(imgPrev){ const img=document.createElement('img'); img.className='bimg'; img.src=imgPrev; img.alt='img'; bw.appendChild(img); }
+
+  const bub=document.createElement('div');
+  bub.className='bubble '+(role==='user'?'ub':'ab');
+  bub.innerHTML=isTyping
+    ?'<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>'
+    :fmt(content);
+
+  bw.appendChild(bub);
+  wrap.appendChild(av);
+  wrap.appendChild(bw);
+  c.appendChild(wrap);
+  wrap.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function rmTyping(){ const el=document.getElementById('tybubble'); if(el) el.remove(); }
+
+// Send
+async function send(override){
+  const inp=document.getElementById('txtIn');
+  const raw=(override||inp.value).trim();
+  if((!raw&&!curImg)||loading) return;
+
+  inp.value=''; inp.style.height='auto';
+  loading=true; document.getElementById('sndBtn').disabled=true;
+
+  const userTxt = raw || 'Is image ko analyse karo aur detailed AI image prompt generate karo.';
+  const imgPrev = curImg?.preview||null;
+  const sImg    = curImg?{...curImg}:null;
+  rmImage();
+
+  addBubble('user', userTxt, imgPrev);
+
+  // Build Gemini parts
+  const parts=[];
+  if(sImg) parts.push({inline_data:{mime_type:sImg.mime, data:sImg.base64}});
+  parts.push({text:userTxt});
+  history.push({role:'user', parts});
+
+  addBubble('ai','',null,true);
+
+  try {
+    // First message: prepend system context
+    const contents = history.length===1
+      ? [{role:'user',parts:[{text:SYS}]},{role:'model',parts:[{text:'Samajh gaya! Main Ai Nayra Vision hoon. Batayein kaise help karun?'}]},...history]
+      : history;
+
+    const res = await fetch(GEMINI_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents,
+        generationConfig:{temperature:0.9, topK:40, topP:0.95, maxOutputTokens:2048},
+        safetySettings:[
+          {category:'HARM_CATEGORY_HARASSMENT',       threshold:'BLOCK_MEDIUM_AND_ABOVE'},
+          {category:'HARM_CATEGORY_HATE_SPEECH',      threshold:'BLOCK_MEDIUM_AND_ABOVE'},
+          {category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_MEDIUM_AND_ABOVE'},
+          {category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_MEDIUM_AND_ABOVE'},
+        ]
+      })
+    });
+
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error?.message||'HTTP '+res.status);
+    }
+
+    const data=await res.json();
+    const reply=data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(!reply) throw new Error('Empty response mila');
+
+    rmTyping();
+    history.push({role:'model',parts:[{text:reply}]});
+    addBubble('ai',reply);
+
+  } catch(err){
+    rmTyping();
+    history.pop(); // remove failed user turn
+    const msg = err.message?.toLowerCase().includes('api key') ? '⚠️ API key invalid hai.'
+              : err.message?.toLowerCase().includes('quota')   ? '⚠️ API quota khatam. Baad mein try karein.'
+              : '⚠️ Error: '+err.message;
+    addBubble('ai', msg);
+    toast(msg);
+  }
+
+  loading=false;
+  document.getElementById('sndBtn').disabled=false;
+  inp.focus();
+}
+</script>
+</body>
+</html>
